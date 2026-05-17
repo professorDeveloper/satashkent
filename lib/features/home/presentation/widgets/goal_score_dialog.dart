@@ -2,7 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_assets.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_dialog.dart';
 
 Future<({int math, int english})?> showGoalScoreDialog(
   BuildContext context, {
@@ -12,12 +12,17 @@ Future<({int math, int english})?> showGoalScoreDialog(
   return showDialog<({int math, int english})>(
     context: context,
     barrierDismissible: true,
-    builder: (ctx) => _GoalScoreDialog(
+    builder: (_) => _GoalScoreDialog(
       initialMath: initialMath,
       initialEnglish: initialEnglish,
     ),
   );
 }
+
+const _min = 200.0;
+const _max = 800.0;
+const _mathColor = Color(0xFF1E88E5);
+const _englishColor = Color(0xFFE53935);
 
 class _GoalScoreDialog extends StatefulWidget {
   final int initialMath;
@@ -32,79 +37,42 @@ class _GoalScoreDialog extends StatefulWidget {
 }
 
 class _GoalScoreDialogState extends State<_GoalScoreDialog> {
-  late double math = widget.initialMath.clamp(200, 800).toDouble();
-  late double english = widget.initialEnglish.clamp(200, 800).toDouble();
+  late double math = widget.initialMath.clamp(_min, _max).toDouble();
+  late double english = widget.initialEnglish.clamp(_min, _max).toDouble();
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    'myGoalScore'.tr(),
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w800,
-                        ),
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close_rounded),
-                  visualDensity: VisualDensity.compact,
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
+    return AppDialog(
+      title: 'myGoalScore'.tr(),
+      submitLabel: 'submit'.tr(),
+      onSubmit: () => Navigator.of(context).pop(
+        (math: math.round(), english: english.round()),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Center(
+            child: Image.asset(
+              AppAssets.setScore,
+              height: 130,
+              fit: BoxFit.contain,
             ),
-            const SizedBox(height: 4),
-            Center(
-              child: Image.asset(
-                AppAssets.setScore,
-                height: 130,
-                fit: BoxFit.contain,
-              ),
-            ),
-            const SizedBox(height: 4),
-            _ScoreSlider(
-              label: 'mathScore'.tr(),
-              value: math,
-              activeColor: const Color(0xFF1E88E5),
-              onChanged: (v) => setState(() => math = v),
-            ),
-            const SizedBox(height: 14),
-            _ScoreSlider(
-              label: 'englishScore'.tr(),
-              value: english,
-              activeColor: const Color(0xFFE53935),
-              onChanged: (v) => setState(() => english = v),
-            ),
-            const SizedBox(height: 18),
-            FilledButton(
-              onPressed: () => Navigator.of(context).pop(
-                (math: math.round(), english: english.round()),
-              ),
-              style: FilledButton.styleFrom(
-                backgroundColor: scheme.onSurface,
-                foregroundColor: scheme.surface,
-                minimumSize: const Size.fromHeight(48),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(
-                'submit'.tr(),
-                style: const TextStyle(fontWeight: FontWeight.w700),
-              ),
-            ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 18),
+          _ScoreSlider(
+            label: 'mathScore'.tr(),
+            value: math,
+            color: _mathColor,
+            onChanged: (v) => setState(() => math = v),
+          ),
+          const SizedBox(height: 16),
+          _ScoreSlider(
+            label: 'englishScore'.tr(),
+            value: english,
+            color: _englishColor,
+            onChanged: (v) => setState(() => english = v),
+          ),
+        ],
       ),
     );
   }
@@ -113,58 +81,53 @@ class _GoalScoreDialogState extends State<_GoalScoreDialog> {
 class _ScoreSlider extends StatelessWidget {
   final String label;
   final double value;
-  final Color activeColor;
+  final Color color;
   final ValueChanged<double> onChanged;
   const _ScoreSlider({
     required this.label,
     required this.value,
-    required this.activeColor,
+    required this.color,
     required this.onChanged,
   });
 
   @override
   Widget build(BuildContext context) {
-    final muted = Theme.of(context).colorScheme.onSurface;
+    final scheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Text(
-              '$label:',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: muted,
-              ),
+        RichText(
+          text: TextSpan(
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+              color: scheme.onSurface,
             ),
-            const SizedBox(width: 8),
-            Text(
-              value.round().toString(),
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
-                color: AppColors.brand,
+            children: [
+              TextSpan(text: '$label: '),
+              TextSpan(
+                text: value.round().toString(),
+                style: const TextStyle(fontWeight: FontWeight.w900),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         SliderTheme(
           data: SliderTheme.of(context).copyWith(
-            activeTrackColor: activeColor,
-            inactiveTrackColor: activeColor.withValues(alpha: 0.18),
-            thumbColor: Colors.white,
-            overlayColor: activeColor.withValues(alpha: 0.15),
-            trackHeight: 3,
+            activeTrackColor: color,
+            inactiveTrackColor: scheme.onSurface.withValues(alpha: 0.15),
+            thumbColor: scheme.onSurface,
+            overlayColor: color.withValues(alpha: 0.18),
+            trackHeight: 4,
             thumbShape: const RoundSliderThumbShape(
-              enabledThumbRadius: 9,
+              enabledThumbRadius: 8,
               elevation: 2,
             ),
           ),
           child: Slider(
             value: value,
-            min: 200,
-            max: 800,
+            min: _min,
+            max: _max,
             divisions: 60,
             onChanged: onChanged,
           ),

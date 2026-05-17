@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/blur_app_bar.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
 import '../../domain/entities/assessment_summary.dart';
@@ -15,7 +16,6 @@ import '../widgets/assessment_section.dart';
 import '../widgets/balance_card.dart';
 import '../widgets/groups_card.dart';
 import '../widgets/logout_big_button.dart';
-import '../widgets/logout_confirm_dialog.dart';
 import '../widgets/profile_header_row.dart';
 import '../widgets/referral_card.dart';
 
@@ -39,6 +39,27 @@ class _ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<_ProfileView> {
+  final scroll = ScrollController();
+  bool scrolled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    scroll.addListener(onScroll);
+  }
+
+  @override
+  void dispose() {
+    scroll.removeListener(onScroll);
+    scroll.dispose();
+    super.dispose();
+  }
+
+  void onScroll() {
+    final next = scroll.offset > 6;
+    if (next != scrolled) setState(() => scrolled = next);
+  }
+
   Future<void> refresh() async {
     final bloc = context.read<ProfileBloc>();
     bloc.add(const ProfileRefreshed());
@@ -62,9 +83,7 @@ class _ProfileViewState extends State<_ProfileView> {
   void refreshBalance() =>
       context.read<ProfileBloc>().add(const ProfileBalanceRefreshed());
 
-  Future<void> confirmLogout() async {
-    final ok = await showLogoutConfirm(context);
-    if (!ok || !mounted) return;
+  void confirmLogout() {
     context.read<AuthBloc>().add(const AuthLogoutRequested());
   }
 
@@ -85,30 +104,24 @@ class _ProfileViewState extends State<_ProfileView> {
         if (msg != null && msg.isNotEmpty) showSnack(msg);
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text('profile'.tr()),
-          centerTitle: true,
-          actions: [
-            IconButton(
-              tooltip: 'settings'.tr(),
-              icon: const Icon(Icons.settings_outlined),
-              onPressed: openSettings,
-            ),
-            const SizedBox(width: 4),
-          ],
-        ),
+        extendBodyBehindAppBar: true,
+        appBar: BlurAppBar(title: 'profile'.tr(), scrolled: scrolled),
         body: BlocBuilder<ProfileBloc, ProfileState>(
           builder: (context, state) {
+            final topInset =
+                MediaQuery.of(context).padding.top + kToolbarHeight - 12;
             return RefreshIndicator(
               color: AppColors.brand,
-              displacement: 28,
-              edgeOffset: 0,
+              displacement: 20,
               onRefresh: refresh,
               child: _Body(
+                controller: scroll,
+                topInset: topInset,
                 state: state,
                 onRefreshBalance: refreshBalance,
                 onLogout: confirmLogout,
                 onEdit: openEdit,
+                onSettings: openSettings,
               ),
             );
           },
@@ -119,16 +132,22 @@ class _ProfileViewState extends State<_ProfileView> {
 }
 
 class _Body extends StatelessWidget {
+  final ScrollController controller;
+  final double topInset;
   final ProfileState state;
   final VoidCallback onRefreshBalance;
   final VoidCallback onLogout;
   final VoidCallback onEdit;
+  final VoidCallback onSettings;
 
   const _Body({
+    required this.controller,
+    required this.topInset,
     required this.state,
     required this.onRefreshBalance,
     required this.onLogout,
     required this.onEdit,
+    required this.onSettings,
   });
 
   AssessmentSummary? _byType(String type) {
@@ -143,9 +162,10 @@ class _Body extends StatelessWidget {
     final user = state.user;
     if (user == null) {
       return ListView(
+        controller: controller,
         physics: const AlwaysScrollableScrollPhysics(),
         children: [
-          const SizedBox(height: 200),
+          SizedBox(height: topInset + 100),
           if (state.loading)
             const Center(child: CircularProgressIndicator(color: AppColors.brand))
           else
@@ -161,8 +181,9 @@ class _Body extends StatelessWidget {
       );
     }
     return ListView(
+      controller: controller,
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.only(bottom: 32),
+      padding: EdgeInsets.only(top: topInset, bottom: 32),
       children: [
         ProfileHeaderRow(user: user, onEdit: onEdit),
         const SizedBox(height: 8),
@@ -235,9 +256,62 @@ class _Body extends StatelessWidget {
         const SizedBox(height: 22),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: _SettingsTile(onTap: onSettings),
+        ),
+        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: LogoutBigButton(onTap: onLogout),
         ),
       ],
+    );
+  }
+}
+
+class _SettingsTile extends StatelessWidget {
+  final VoidCallback onTap;
+  const _SettingsTile({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final color = scheme.onSurface;
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.circular(14),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(14),
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(14),
+            border:
+                Border.all(color: Theme.of(context).dividerColor, width: 0.6),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.settings_outlined, color: color, size: 20),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'settings'.tr(),
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: color,
+                  ),
+                ),
+              ),
+              Icon(
+                Icons.chevron_right_rounded,
+                color: color.withValues(alpha: 0.6),
+                size: 22,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -19,72 +19,46 @@ class DaysLeftCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final days = daysLeft;
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(18),
+    return Container(
+      height: 130,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(18),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [AppColors.brand, AppColors.brandDark],
+        ),
+      ),
+      clipBehavior: Clip.antiAlias,
       child: Stack(
         children: [
-          Container(
-            height: 140,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [AppColors.pink, AppColors.pinkDark],
-              ),
-            ),
-          ),
           Positioned(
-            right: -60,
-            top: -70,
+            right: -80,
+            top: -90,
             child: Container(
-              width: 200,
-              height: 200,
-              decoration: BoxDecoration(
+              width: 230,
+              height: 230,
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white.withValues(alpha: 0.12),
+                color: AppColors.pink,
               ),
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 14, 14),
+            padding: const EdgeInsets.fromLTRB(20, 14, 14, 14),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      days?.toString() ?? '—',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 46,
-                        fontWeight: FontWeight.w900,
-                        height: 1.0,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Text(
-                        'daysLabel'.tr(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                _DaysNumber(target: days),
                 Row(
                   children: [
                     Expanded(
                       child: Text(
                         'leftUntilExam'.tr(),
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.85),
-                          fontSize: 13.5,
+                          color: Colors.white.withValues(alpha: 0.9),
+                          fontSize: 13,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -101,6 +75,58 @@ class DaysLeftCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _DaysNumber extends StatelessWidget {
+  final int? target;
+  const _DaysNumber({required this.target});
+
+  @override
+  Widget build(BuildContext context) {
+    final value = target ?? 0;
+    return TweenAnimationBuilder<double>(
+      duration: const Duration(milliseconds: 1100),
+      curve: Curves.easeOutCubic,
+      tween: Tween<double>(begin: 0, end: value.toDouble()),
+      builder: (_, animated, _) {
+        final number = target == null ? '—' : animated.round().toString();
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            ShaderMask(
+              shaderCallback: (rect) => const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Colors.white, Color(0xFFFFE3E9)],
+              ).createShader(rect),
+              child: Text(
+                number,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 44,
+                  fontWeight: FontWeight.w900,
+                  height: 1,
+                  letterSpacing: -1.2,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: Text(
+                'daysLabel'.tr(),
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.95),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

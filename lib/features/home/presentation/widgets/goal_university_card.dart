@@ -3,16 +3,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_assets.dart';
-import 'edit_chip.dart';
 
 class GoalUniversityCard extends StatelessWidget {
   final String? imageUrl;
-  final VoidCallback onEdit;
-  const GoalUniversityCard({
-    super.key,
-    required this.imageUrl,
-    required this.onEdit,
-  });
+  const GoalUniversityCard({super.key, required this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +14,7 @@ class GoalUniversityCard extends StatelessWidget {
     final muted = scheme.onSurface.withValues(alpha: 0.55);
     final hasImage = (imageUrl ?? '').isNotEmpty;
     return Container(
-      height: 160,
+      height: 170,
       decoration: BoxDecoration(
         color: scheme.surface,
         borderRadius: BorderRadius.circular(18),
@@ -28,48 +22,51 @@ class GoalUniversityCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: Stack(
         children: [
-          Positioned.fill(
-            child: Padding(
-              padding: const EdgeInsets.only(
-                top: 36,
-                left: 18,
-                right: 18,
-                bottom: 12,
-              ),
-              child: hasImage
-                  ? CachedNetworkImage(
-                      imageUrl: imageUrl!,
-                      fit: BoxFit.contain,
-                      placeholder: (_, _) => Image.asset(
-                        AppAssets.accepted,
-                        fit: BoxFit.contain,
-                      ),
-                      errorWidget: (_, _, _) => Image.asset(
-                        AppAssets.accepted,
-                        fit: BoxFit.contain,
-                      ),
-                    )
-                  : Image.asset(AppAssets.accepted, fit: BoxFit.contain),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(14, 14, 12, 14),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Text(
-                    'myGoalUniversity'.tr(),
-                    style: TextStyle(
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w700,
-                      color: muted,
-                      height: 1.2,
+          if (hasImage)
+            Positioned(
+              left: 14,
+              right: 14,
+              top: 38,
+              bottom: 14,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: CachedNetworkImage(
+                  imageUrl: imageUrl!,
+                  fit: BoxFit.cover,
+                  errorWidget: (_, _, _) => Container(
+                    color: muted.withValues(alpha: 0.08),
+                    alignment: Alignment.center,
+                    child: Icon(
+                      Icons.account_balance_rounded,
+                      size: 38,
+                      color: muted.withValues(alpha: 0.5),
                     ),
                   ),
                 ),
-                EditChip(onTap: onEdit),
-              ],
+              ),
+            ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+            child: Text(
+              'myGoalUniversity'.tr(),
+              style: TextStyle(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w700,
+                color: muted,
+                height: 1.2,
+              ),
+            ),
+          ),
+          Positioned(
+            top: -10,
+            right: -10,
+            child: IgnorePointer(
+              child: Image.asset(
+                AppAssets.accepted,
+                width: 100,
+                height: 100,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
         ],

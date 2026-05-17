@@ -7,14 +7,9 @@ class BookmarkedSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final muted = scheme.onSurface.withValues(alpha: 0.55);
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: scheme.surface,
-        borderRadius: BorderRadius.circular(18),
-      ),
+    final muted = scheme.onSurface.withValues(alpha: 0.6);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -24,21 +19,11 @@ class BookmarkedSection extends StatelessWidget {
                   fontWeight: FontWeight.w800,
                 ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 28),
           Center(
-            child: Column(
-              children: [
-                Icon(
-                  Icons.bookmark_border_rounded,
-                  size: 40,
-                  color: muted.withValues(alpha: 0.6),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'noBookmarks'.tr(),
-                  style: TextStyle(fontSize: 13, color: muted),
-                ),
-              ],
+            child: Text(
+              'noBookmarks'.tr(),
+              style: TextStyle(fontSize: 13, color: muted),
             ),
           ),
         ],

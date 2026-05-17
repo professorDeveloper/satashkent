@@ -70,10 +70,12 @@ class _CompetitionsViewState extends State<_CompetitionsView> {
       appBar: BlurAppBar(title: 'tabCompetitions'.tr(), scrolled: scrolled),
       body: BlocBuilder<CompetitionsBloc, CompetitionsState>(
         builder: (context, state) {
+          final topInset =
+              MediaQuery.of(context).padding.top + kToolbarHeight;
           return RefreshIndicator(
             color: AppColors.brand,
-            displacement: 28,
-            edgeOffset: 0,
+            displacement: 20,
+            edgeOffset: topInset,
             onRefresh: refresh,
             child: _Body(state: state, controller: scroll),
           );
@@ -90,7 +92,8 @@ class _Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final topInset = MediaQuery.of(context).padding.top + kToolbarHeight + 8;
+    final topInset =
+        MediaQuery.of(context).padding.top + kToolbarHeight - 12;
     if (state.errorMessage != null && state.page.isEmpty) {
       return ListView(
         controller: controller,

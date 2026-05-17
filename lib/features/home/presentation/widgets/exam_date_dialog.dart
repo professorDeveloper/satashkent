@@ -1,7 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/constants/app_assets.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_dialog.dart';
 
 Future<DateTime?> showExamDateDialog(
   BuildContext context, {
@@ -14,6 +15,26 @@ Future<DateTime?> showExamDateDialog(
   );
 }
 
+const _monthShort = [
+  'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
+  'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC',
+];
+
+List<DateTime> _upcomingSatDates() {
+  final now = DateTime.now();
+  final all = <DateTime>[
+    DateTime(now.year, 3, 14),
+    DateTime(now.year, 5, 2),
+    DateTime(now.year, 6, 6),
+    DateTime(now.year, 8, 15),
+    DateTime(now.year, 9, 12),
+    DateTime(now.year, 10, 3),
+    DateTime(now.year, 11, 7),
+    DateTime(now.year, 12, 5),
+  ];
+  return all.where((d) => d.isAfter(now)).toList();
+}
+
 class _ExamDateDialog extends StatefulWidget {
   final DateTime? initial;
   const _ExamDateDialog({required this.initial});
@@ -23,132 +44,147 @@ class _ExamDateDialog extends StatefulWidget {
 }
 
 class _ExamDateDialogState extends State<_ExamDateDialog> {
-  late DateTime? selected = _matchKnown(widget.initial);
+  late final List<DateTime> dates = _upcomingSatDates();
+  late DateTime? selected = _findMatch();
 
-  static final List<DateTime> _satDates = _buildUpcomingSatDates();
-
-  static DateTime? _matchKnown(DateTime? d) {
-    if (d == null) return null;
-    for (final s in _satDates) {
-      if (s.year == d.year && s.month == d.month && s.day == d.day) return s;
+  DateTime? _findMatch() {
+    if (widget.initial == null) return null;
+    for (final d in dates) {
+      if (d.year == widget.initial!.year &&
+          d.month == widget.initial!.month &&
+          d.day == widget.initial!.day) {
+        return d;
+      }
     }
     return null;
   }
 
-  static List<DateTime> _buildUpcomingSatDates() {
-    final now = DateTime.now();
-    final base = <DateTime>[
-      DateTime(now.year, 3, 14),
-      DateTime(now.year, 5, 2),
-      DateTime(now.year, 6, 6),
-      DateTime(now.year, 8, 15),
-      DateTime(now.year, 9, 12),
-      DateTime(now.year, 10, 3),
-      DateTime(now.year, 11, 7),
-      DateTime(now.year, 12, 5),
-      DateTime(now.year + 1, 3, 13),
-      DateTime(now.year + 1, 5, 1),
-      DateTime(now.year + 1, 6, 5),
-    ];
-    return base.where((d) => d.isAfter(now)).toList();
+  @override
+  Widget build(BuildContext context) {
+    return AppDialog(
+      title: 'examDayTitle'.tr(),
+      submitLabel: 'submit'.tr(),
+      onSubmit: selected == null
+          ? null
+          : () => Navigator.of(context).pop(selected),
+      child: dates.isEmpty
+          ? Padding(
+              padding: const EdgeInsets.all(20),
+              child: Text(
+                'noUpcomingDates'.tr(),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Theme.of(context)
+                      .colorScheme
+                      .onSurface
+                      .withValues(alpha: 0.6),
+                ),
+              ),
+            )
+          : GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              gridDelegate:
+                  const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+                childAspectRatio: 0.85,
+              ),
+              itemCount: dates.length,
+              itemBuilder: (_, i) {
+                final d = dates[i];
+                return _DateTile(
+                  date: d,
+                  active: selected == d,
+                  onTap: () => setState(() => selected = d),
+                );
+              },
+            ),
+    );
   }
+}
+
+class _DateTile extends StatelessWidget {
+  final DateTime date;
+  final bool active;
+  final VoidCallback onTap;
+  const _DateTile({
+    required this.date,
+    required this.active,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    'examDayTitle'.tr(),
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w800,
-                        ),
+    final radius = BorderRadius.circular(14);
+    return Material(
+      color: Colors.transparent,
+      borderRadius: radius,
+      child: InkWell(
+        borderRadius: radius,
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
+          decoration: BoxDecoration(
+            borderRadius: radius,
+            gradient: active
+                ? const LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [AppColors.brand, AppColors.brandDark],
+                  )
+                : null,
+            color: active ? null : scheme.surface,
+            border: active
+                ? null
+                : Border.all(
+                    color: Theme.of(context).dividerColor,
+                    width: 0.8,
                   ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close_rounded),
-                  visualDensity: VisualDensity.compact,
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            ),
-            Center(
-              child: Image.asset(
-                AppAssets.examDate,
-                height: 130,
-                fit: BoxFit.contain,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'examDateLabel'.tr(),
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: scheme.onSurface.withValues(alpha: 0.65),
-              ),
-            ),
-            const SizedBox(height: 6),
-            DropdownButtonFormField<DateTime>(
-              initialValue: selected,
-              isExpanded: true,
-              decoration: InputDecoration(
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 12,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                _monthShort[date.month - 1],
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 1,
+                  color: active
+                      ? Colors.white.withValues(alpha: 0.9)
+                      : scheme.onSurface.withValues(alpha: 0.55),
                 ),
               ),
-              hint: Text('selectExamDate'.tr()),
-              items: [
-                for (final d in _ExamDateDialogState._satDates)
-                  DropdownMenuItem(
-                    value: d,
-                    child: Text(_formatDate(d)),
-                  ),
-              ],
-              onChanged: (v) => setState(() => selected = v),
-            ),
-            const SizedBox(height: 18),
-            FilledButton(
-              onPressed: selected == null
-                  ? null
-                  : () => Navigator.of(context).pop(selected),
-              style: FilledButton.styleFrom(
-                backgroundColor: scheme.onSurface,
-                foregroundColor: scheme.surface,
-                minimumSize: const Size.fromHeight(48),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+              const SizedBox(height: 4),
+              Text(
+                date.day.toString(),
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w900,
+                  height: 1,
+                  color: active ? Colors.white : scheme.onSurface,
                 ),
               ),
-              child: Text(
-                'submit'.tr(),
-                style: const TextStyle(fontWeight: FontWeight.w700),
+              const SizedBox(height: 6),
+              Text(
+                date.year.toString(),
+                style: TextStyle(
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w600,
+                  color: active
+                      ? Colors.white.withValues(alpha: 0.85)
+                      : scheme.onSurface.withValues(alpha: 0.45),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
-  }
-
-  String _formatDate(DateTime d) {
-    const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December',
-    ];
-    return '${months[d.month - 1]} ${d.day}, ${d.year}';
   }
 }

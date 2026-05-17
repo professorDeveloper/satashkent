@@ -12,7 +12,7 @@ class RoadmapCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final muted = scheme.onSurface.withValues(alpha: 0.55);
-    final radius = BorderRadius.circular(20);
+    final radius = BorderRadius.circular(18);
     return Material(
       color: scheme.surface,
       borderRadius: radius,
@@ -20,32 +20,25 @@ class RoadmapCard extends StatelessWidget {
         borderRadius: radius,
         onTap: onTap,
         child: Container(
-          height: 130,
-          decoration: BoxDecoration(
-            borderRadius: radius,
-            border:
-                Border.all(color: Theme.of(context).dividerColor, width: 0.6),
-          ),
+          height: 150,
+          decoration: BoxDecoration(borderRadius: radius),
           clipBehavior: Clip.antiAlias,
           child: Stack(
             children: [
-              Positioned.fill(
+              Positioned(
+                right: -10,
+                top: -10,
+                bottom: -10,
                 child: Opacity(
-                  opacity: 0.85,
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding: const EdgeInsets.only(right: 4, top: 6, bottom: 6),
-                      child: SvgPicture.asset(
-                        AppAssets.roadmapsBg,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
+                  opacity: 0.9,
+                  child: SvgPicture.asset(
+                    AppAssets.roadmapsBg,
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+                padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
                 child: Text(
                   'roadmap'.tr(),
                   style: TextStyle(
