@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:equatable/equatable.dart';
 
 import '../../../auth/domain/entities/user.dart';
@@ -29,6 +31,19 @@ class HomeExamDateSubmitted extends HomeEvent {
   const HomeExamDateSubmitted(this.date);
   @override
   List<Object?> get props => [date];
+}
+
+class HomeGoalUniversityPicked extends HomeEvent {
+  final Uint8List bytes;
+  final String filename;
+  final String contentType;
+  const HomeGoalUniversityPicked({
+    required this.bytes,
+    required this.filename,
+    this.contentType = 'image/png',
+  });
+  @override
+  List<Object?> get props => [bytes.length, filename, contentType];
 }
 
 class HomeUserPatched extends HomeEvent {

@@ -17,6 +17,7 @@ import '../widgets/exam_date_dialog.dart';
 import '../widgets/goal_score_card.dart';
 import '../widgets/goal_score_dialog.dart';
 import '../widgets/goal_university_card.dart';
+import '../widgets/goal_university_dialog.dart';
 import '../widgets/last_test_card.dart';
 import '../widgets/quick_access_section.dart';
 
@@ -101,6 +102,17 @@ class _HomeViewState extends State<_HomeView> {
 
   void openCompetitions() => getIt<MainTabController>().goto(1);
 
+  Future<void> editUniversity() async {
+    final bloc = context.read<HomeBloc>();
+    final result = await showGoalUniversityDialog(context);
+    if (result == null || !mounted) return;
+    bloc.add(HomeGoalUniversityPicked(
+      bytes: result.bytes,
+      filename: result.filename,
+      contentType: result.contentType,
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<HomeBloc, HomeState>(
@@ -127,6 +139,7 @@ class _HomeViewState extends State<_HomeView> {
                 onEditGoalScore: editGoalScore,
                 onEditExamDate: editExamDate,
                 onOpenCompetitions: openCompetitions,
+                onEditUniversity: editUniversity,
               ),
             );
           },
@@ -136,7 +149,11 @@ class _HomeViewState extends State<_HomeView> {
   }
 
   String _resolveMessage(String key) {
-    const translatable = {'goalScoreUpdated', 'examDateUpdated'};
+    const translatable = {
+      'goalScoreUpdated',
+      'examDateUpdated',
+      'goalUniversityUpdated',
+    };
     return translatable.contains(key) ? key.tr() : key;
   }
 }
@@ -147,6 +164,7 @@ class _DashboardList extends StatelessWidget {
   final VoidCallback onEditGoalScore;
   final VoidCallback onEditExamDate;
   final VoidCallback onOpenCompetitions;
+  final VoidCallback onEditUniversity;
 
   const _DashboardList({
     required this.controller,
@@ -154,6 +172,7 @@ class _DashboardList extends StatelessWidget {
     required this.onEditGoalScore,
     required this.onEditExamDate,
     required this.onOpenCompetitions,
+    required this.onEditUniversity,
   });
 
   @override
@@ -200,10 +219,13 @@ class _DashboardList extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: RepaintBoundary(
-            child: GoalUniversityCard(imageUrl: user?.goalUniversity),
+            child: GoalUniversityCard(
+              imageUrl: user?.goalUniversity,
+              onEdit: onEditUniversity,
+            ),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: RepaintBoundary(
@@ -215,7 +237,7 @@ class _DashboardList extends StatelessWidget {
           assessments: state.assessments,
           onTap: (_) {},
         ),
-        const SizedBox(height: 22),
+        const SizedBox(height: 12),
         const BookmarkedSection(),
       ],
     );

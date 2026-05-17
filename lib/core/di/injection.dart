@@ -19,6 +19,7 @@ import '../../features/home/domain/usecases/get_assessments_summary_usecase.dart
 import '../../features/home/domain/usecases/get_last_exam_result_usecase.dart';
 import '../../features/home/domain/usecases/set_exam_date_usecase.dart';
 import '../../features/home/domain/usecases/set_goal_score_usecase.dart';
+import '../../features/home/domain/usecases/upload_goal_university_usecase.dart';
 import '../../features/home/presentation/bloc/home_bloc.dart';
 import '../../features/main_shell/presentation/widgets/main_tab_controller.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
@@ -45,6 +46,11 @@ import '../../features/notifications/domain/repositories/notifications_repositor
 import '../../features/notifications/domain/usecases/get_notifications_usecase.dart';
 import '../../features/notifications/domain/usecases/mark_notification_read_usecase.dart';
 import '../../features/notifications/presentation/bloc/notifications_bloc.dart';
+import '../../features/questions/data/datasources/questions_remote_data_source.dart';
+import '../../features/questions/data/repositories/questions_repository_impl.dart';
+import '../../features/questions/domain/repositories/questions_repository.dart';
+import '../../features/questions/domain/usecases/get_questions_usecase.dart';
+import '../../features/questions/presentation/bloc/questions_bloc.dart';
 import '../../features/referral/data/datasources/referral_remote_data_source.dart';
 
 final getIt = GetIt.instance;
@@ -87,6 +93,9 @@ Future<void> configureDependencies() async {
   getIt.registerSingleton<NotificationsRemoteDataSource>(
     NotificationsRemoteDataSource(dio: getIt<Dio>()),
   );
+  getIt.registerSingleton<QuestionsRemoteDataSource>(
+    QuestionsRemoteDataSource(dio: getIt<Dio>()),
+  );
 
   getIt.registerSingleton<AuthRepository>(
     AuthRepositoryImpl(getIt<AuthRemoteDataSource>(), getIt<HiveService>()),
@@ -106,12 +115,18 @@ Future<void> configureDependencies() async {
   getIt.registerSingleton<NotificationsRepository>(
     NotificationsRepositoryImpl(getIt<NotificationsRemoteDataSource>()),
   );
+  getIt.registerSingleton<QuestionsRepository>(
+    QuestionsRepositoryImpl(getIt<QuestionsRemoteDataSource>()),
+  );
 
   getIt.registerSingleton<GetNotificationsUseCase>(
     GetNotificationsUseCase(getIt<NotificationsRepository>()),
   );
   getIt.registerSingleton<MarkNotificationReadUseCase>(
     MarkNotificationReadUseCase(getIt<NotificationsRepository>()),
+  );
+  getIt.registerSingleton<GetQuestionsUseCase>(
+    GetQuestionsUseCase(getIt<QuestionsRepository>()),
   );
 
   getIt.registerSingleton<GetActiveCompetitionsUseCase>(
@@ -128,6 +143,9 @@ Future<void> configureDependencies() async {
   );
   getIt.registerSingleton<SetExamDateUseCase>(
     SetExamDateUseCase(getIt<HomeRepository>()),
+  );
+  getIt.registerSingleton<UploadGoalUniversityUseCase>(
+    UploadGoalUniversityUseCase(getIt<HomeRepository>()),
   );
 
   getIt.registerSingleton<LoginUseCase>(LoginUseCase(getIt<AuthRepository>()));
@@ -180,6 +198,9 @@ Future<void> configureDependencies() async {
       getActiveCompetitionsUseCase: getIt<GetActiveCompetitionsUseCase>(),
     ),
   );
+  getIt.registerFactory<QuestionsBloc>(
+    () => QuestionsBloc(getQuestionsUseCase: getIt<GetQuestionsUseCase>()),
+  );
   getIt.registerLazySingleton<NotificationsBloc>(
     () => NotificationsBloc(
       getNotificationsUseCase: getIt<GetNotificationsUseCase>(),
@@ -193,6 +214,7 @@ Future<void> configureDependencies() async {
       getLastExamResultUseCase: getIt<GetLastExamResultUseCase>(),
       setGoalScoreUseCase: getIt<SetGoalScoreUseCase>(),
       setExamDateUseCase: getIt<SetExamDateUseCase>(),
+      uploadGoalUniversityUseCase: getIt<UploadGoalUniversityUseCase>(),
       hiveService: getIt<HiveService>(),
     ),
   );

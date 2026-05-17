@@ -18,19 +18,14 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  static const _firstDuration = Duration(milliseconds: 3200);
-  static const _transitionDuration = Duration(milliseconds: 700);
-  static bool _firstShown = false;
+  static const _minDuration = Duration(milliseconds: 3200);
   StreamSubscription<AuthState>? _sub;
   bool _navigated = false;
   DateTime? _startedAt;
-  late final Duration _minDuration;
 
   @override
   void initState() {
     super.initState();
-    _minDuration = _firstShown ? _transitionDuration : _firstDuration;
-    _firstShown = true;
     _startedAt = DateTime.now();
     WidgetsBinding.instance.addPostFrameCallback((_) => _bootstrap());
   }

@@ -12,9 +12,9 @@ class NotificationsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<NotificationsBloc>(
-      create: (_) =>
-          getIt<NotificationsBloc>()..add(const NotificationsRequested()),
+    final bloc = getIt<NotificationsBloc>()..add(const NotificationsRequested());
+    return BlocProvider<NotificationsBloc>.value(
+      value: bloc,
       child: const _NotificationsView(),
     );
   }

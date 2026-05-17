@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 
 import '../../../../core/error/result.dart';
@@ -70,6 +72,28 @@ class HomeRepositoryImpl implements HomeRepository {
   Future<Result<User>> setExamDate(DateTime date) async {
     try {
       final user = await _remote.setExamDate(date);
+      await _hive.saveUser(user);
+      return Success(user);
+    } on DioException catch (e) {
+      return Failure(Exception(_msg(e)));
+    } catch (e) {
+      return Failure(Exception(e.toString()));
+    }
+  }
+
+  @override
+  Future<Result<User>> uploadAndSetGoalUniversity({
+    required Uint8List bytes,
+    required String filename,
+    String contentType = 'image/png',
+  }) async {
+    try {
+      final url = await _remote.uploadUserImage(
+        bytes: bytes,
+        filename: filename,
+        contentType: contentType,
+      );
+      final user = await _remote.setGoalUniversity(url);
       await _hive.saveUser(user);
       return Success(user);
     } on DioException catch (e) {
