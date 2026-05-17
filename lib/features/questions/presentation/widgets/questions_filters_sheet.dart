@@ -64,24 +64,26 @@ class _FiltersSheetState extends State<_FiltersSheet> {
         builder: (_, scroll) => Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(top: 10),
+                decoration: BoxDecoration(
+                  color: muted.withValues(alpha: 0.4),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 10, 12, 10),
+              padding: const EdgeInsets.fromLTRB(20, 10, 12, 6),
               child: Row(
                 children: [
-                  Container(
-                    width: 38,
-                    height: 4,
-                    margin: const EdgeInsets.only(right: 8),
-                    decoration: BoxDecoration(
-                      color: muted.withValues(alpha: 0.4),
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
                   Expanded(
                     child: Text(
                       'filters'.tr(),
                       style: const TextStyle(
-                        fontSize: 17,
+                        fontSize: 18,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -254,7 +256,7 @@ class _Chip extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Material(
-      color: selected ? color.withValues(alpha: 0.14) : Colors.transparent,
+      color: selected ? color : Colors.transparent,
       borderRadius: BorderRadius.circular(20),
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
@@ -264,10 +266,8 @@ class _Chip extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: selected
-                  ? color
-                  : Theme.of(context).dividerColor,
-              width: selected ? 1.4 : 0.8,
+              color: selected ? color : Theme.of(context).dividerColor,
+              width: selected ? 0 : 0.8,
             ),
           ),
           child: Text(
@@ -275,7 +275,9 @@ class _Chip extends StatelessWidget {
             style: TextStyle(
               fontSize: 12.5,
               fontWeight: FontWeight.w700,
-              color: selected ? color : scheme.onSurface.withValues(alpha: 0.7),
+              color: selected
+                  ? Colors.white
+                  : scheme.onSurface.withValues(alpha: 0.7),
             ),
           ),
         ),

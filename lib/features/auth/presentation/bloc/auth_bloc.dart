@@ -26,8 +26,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthLoginSubmitted>(_onLogin);
     on<AuthRegisterSubmitted>(_onRegister);
     on<AuthLogoutRequested>(_onLogout);
-    on<AuthSessionExpired>(
-        (_, emit) => emit(const AuthUnauthenticated('Session expired')));
+    on<AuthSessionExpired>((_, emit) {
+      emit(const AuthUnauthenticated('Session expired'));
+    });
   }
 
   Future<void> _onStarted(AuthStarted event, Emitter<AuthState> emit) async {
@@ -45,7 +46,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _onLogin(
-      AuthLoginSubmitted event, Emitter<AuthState> emit) async {
+    AuthLoginSubmitted event,
+    Emitter<AuthState> emit,
+  ) async {
     emit(const AuthLoading());
     final result = await loginUseCase(
       login: event.login,
@@ -53,13 +56,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       rememberMe: event.rememberMe,
     );
     result.when(
-      success: (u) => emit(AuthAuthenticated(u)),
-      failure: (e) => emit(AuthError(_messageOf(e))),
+      success: (u) {
+        emit(AuthAuthenticated(u));
+      },
+      failure: (e) {
+        emit(AuthError(_messageOf(e)));
+      },
     );
   }
 
   Future<void> _onRegister(
-      AuthRegisterSubmitted event, Emitter<AuthState> emit) async {
+    AuthRegisterSubmitted event,
+    Emitter<AuthState> emit,
+  ) async {
     emit(const AuthLoading());
     final result = await registerUseCase(
       name: event.name,
@@ -68,13 +77,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       password: event.password,
     );
     result.when(
-      success: (u) => emit(AuthAuthenticated(u)),
-      failure: (e) => emit(AuthError(_messageOf(e))),
+      success: (u) {
+        emit(AuthAuthenticated(u));
+      },
+      failure: (e) {
+        emit(AuthError(_messageOf(e)));
+      },
     );
   }
 
   Future<void> _onLogout(
-      AuthLogoutRequested event, Emitter<AuthState> emit) async {
+    AuthLogoutRequested event,
+    Emitter<AuthState> emit,
+  ) async {
     await logoutUseCase();
     emit(const AuthUnauthenticated());
   }

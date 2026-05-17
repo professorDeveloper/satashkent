@@ -3,14 +3,14 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class AppConstants {
   AppConstants._();
 
-  static String get baseUrl =>
-      dotenv.maybeGet('API_BASE_URL') ?? 'https://api.satashkent.uz/user-api';
+  static String get baseUrl => 'https://api.satashkent.uz/user-api';
 
-  static String get webBaseUrl =>
-      dotenv.maybeGet('WEB_BASE_URL') ?? 'https://1600.satashkent.uz';
+  static String get webBaseUrl => 'https://1600.satashkent.uz';
 
-  static String? get devLogin => dotenv.maybeGet('DEV_LOGIN');
-  static String? get devPassword => dotenv.maybeGet('DEV_PASSWORD');
+  static String? get devLogin => dotenv.maybeGet('DEV_LOGIN') ?? "saikou";
+
+  static String? get devPassword =>
+      dotenv.maybeGet('DEV_PASSWORD') ?? "_bujR2NQB7i6L.3";
 
   static const String authBox = 'auth_box';
   static const String settingsBox = 'settings_box';

@@ -29,16 +29,26 @@ class QuestionsStatusDropdown extends StatelessWidget {
         child: DropdownButton<QuestionStatus?>(
           value: value,
           isDense: true,
-          alignment: AlignmentDirectional.centerEnd,
           icon: Icon(
             Icons.keyboard_arrow_down_rounded,
             size: 18,
             color: scheme.onSurface.withValues(alpha: 0.6),
           ),
-          hint: Text(
-            'allQuestions'.tr(),
-            style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700),
-          ),
+          selectedItemBuilder: (_) => [
+            _selectedText('allQuestions'.tr(), scheme.onSurface),
+            _selectedText(
+              QuestionLabels.status(QuestionStatus.newOne),
+              const Color(0xFF2F7BD8),
+            ),
+            _selectedText(
+              QuestionLabels.status(QuestionStatus.wrong),
+              const Color(0xFFD63A3A),
+            ),
+            _selectedText(
+              QuestionLabels.status(QuestionStatus.correct),
+              const Color(0xFF239B5C),
+            ),
+          ],
           items: [
             DropdownMenuItem(
               value: null,
@@ -55,6 +65,20 @@ class QuestionsStatusDropdown extends StatelessWidget {
             _statusItem(QuestionStatus.correct, const Color(0xFF239B5C)),
           ],
           onChanged: onChanged,
+        ),
+      ),
+    );
+  }
+
+  Widget _selectedText(String text, Color color) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 12.5,
+          fontWeight: FontWeight.w700,
+          color: color,
         ),
       ),
     );

@@ -17,23 +17,29 @@ class CompetitionsBloc extends Bloc<CompetitionsEvent, CompetitionsState> {
     emit(state.copyWith(loading: true, clearError: true));
     final result = await getActiveCompetitionsUseCase();
     result.when(
-      success: (page) => emit(state.copyWith(loading: false, page: page)),
-      failure: (e) => emit(state.copyWith(
-        loading: false,
-        errorMessage: e.toString().replaceFirst('Exception: ', ''),
-      )),
+      success: (page) {
+        emit(state.copyWith(loading: false, page: page));
+      },
+      failure: (e) {
+        emit(state.copyWith(
+          loading: false,
+          errorMessage: e.toString().replaceFirst('Exception: ', ''),
+        ));
+      },
     );
   }
 
   Future<void> _onRequested(
     CompetitionsRequested event,
     Emitter<CompetitionsState> emit,
-  ) =>
-      _load(emit);
+  ) async {
+    await _load(emit);
+  }
 
   Future<void> _onRefreshed(
     CompetitionsRefreshed event,
     Emitter<CompetitionsState> emit,
-  ) =>
-      _load(emit);
+  ) async {
+    await _load(emit);
+  }
 }
