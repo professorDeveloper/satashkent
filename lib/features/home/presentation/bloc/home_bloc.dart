@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/storage/hive_service.dart';
+import '../../../profile/domain/usecases/get_profile_usecase.dart';
 import '../../domain/usecases/get_assessments_summary_usecase.dart';
 import '../../domain/usecases/get_last_exam_result_usecase.dart';
 import '../../domain/usecases/set_exam_date_usecase.dart';
@@ -9,6 +10,7 @@ import 'home_event.dart';
 import 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
+  final GetProfileUseCase getProfileUseCase;
   final GetAssessmentsSummaryUseCase getAssessmentsSummaryUseCase;
   final GetLastExamResultUseCase getLastExamResultUseCase;
   final SetGoalScoreUseCase setGoalScoreUseCase;
@@ -16,6 +18,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final HiveService hiveService;
 
   HomeBloc({
+    required this.getProfileUseCase,
     required this.getAssessmentsSummaryUseCase,
     required this.getLastExamResultUseCase,
     required this.setGoalScoreUseCase,
@@ -31,14 +34,15 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   Future<void> _load(Emitter<HomeState> emit) async {
     emit(state.copyWith(loading: true, clearError: true));
-    final cached = hiveService.getUser();
+    final profileFuture = getProfileUseCase();
     final assessFuture = getAssessmentsSummaryUseCase();
     final examFuture = getLastExamResultUseCase();
+    final profileRes = await profileFuture;
     final assessRes = await assessFuture;
     final examRes = await examFuture;
     emit(state.copyWith(
       loading: false,
-      user: cached ?? state.user,
+      user: profileRes.getOrNull() ?? state.user,
       assessments: assessRes.getOrNull() ?? state.assessments,
       lastExam: examRes.getOrNull() ?? state.lastExam,
     ));

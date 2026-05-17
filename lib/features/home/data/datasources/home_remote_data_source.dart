@@ -43,11 +43,11 @@ class HomeRemoteDataSource {
   }
 
   Future<UserModel> setExamDate(DateTime date) async {
-    final utcMidnight =
+    final iso =
         DateTime.utc(date.year, date.month, date.day).toIso8601String();
     final response = await dio.put(
       '/profile/set-exam-date',
-      data: {'tillExam': utcMidnight},
+      data: {'examDate': iso},
     );
     return _unwrapUser(response);
   }

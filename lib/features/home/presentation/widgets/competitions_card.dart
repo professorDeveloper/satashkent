@@ -1,12 +1,11 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../core/constants/app_assets.dart';
 
-class RoadmapCard extends StatelessWidget {
-  final VoidCallback? onTap;
-  const RoadmapCard({super.key, this.onTap});
+class CompetitionsCard extends StatelessWidget {
+  final VoidCallback onTap;
+  const CompetitionsCard({super.key, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -20,27 +19,29 @@ class RoadmapCard extends StatelessWidget {
         borderRadius: radius,
         onTap: onTap,
         child: Container(
-          height: 150,
-          decoration: BoxDecoration(borderRadius: radius),
+          height: 130,
+          decoration: BoxDecoration(
+            borderRadius: radius,
+            border:
+                Border.all(color: Theme.of(context).dividerColor, width: 0.6),
+          ),
           clipBehavior: Clip.antiAlias,
           child: Stack(
             children: [
               Positioned(
-                right: -10,
-                top: -10,
-                bottom: -10,
-                child: Opacity(
-                  opacity: 0.9,
-                  child: SvgPicture.asset(
-                    AppAssets.roadmapsBg,
-                    fit: BoxFit.contain,
-                  ),
+                right: 6,
+                top: 6,
+                bottom: 6,
+                width: 150,
+                child: Image.asset(
+                  AppAssets.leaderboard,
+                  fit: BoxFit.contain,
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(18, 16, 18, 16),
+                padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
                 child: Text(
-                  'roadmap'.tr(),
+                  'tabCompetitions'.tr(),
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,

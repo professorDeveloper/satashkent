@@ -20,9 +20,9 @@ class DaysLeftCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final days = daysLeft;
     return Container(
-      height: 130,
+      height: 170,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(20),
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -34,18 +34,27 @@ class DaysLeftCard extends StatelessWidget {
         children: [
           Positioned(
             right: -80,
-            top: -90,
+            top: -100,
             child: Container(
-              width: 230,
-              height: 230,
+              width: 250,
+              height: 250,
               decoration: const BoxDecoration(
                 shape: BoxShape.circle,
                 color: AppColors.pink,
               ),
             ),
           ),
+          Positioned(
+            right: 20,
+            top: 22,
+            child: Icon(
+              Icons.event_available_rounded,
+              size: 56,
+              color: Colors.white.withValues(alpha: 0.18),
+            ),
+          ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 14, 14, 14),
+            padding: const EdgeInsets.fromLTRB(22, 20, 16, 18),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -57,15 +66,15 @@ class DaysLeftCard extends StatelessWidget {
                       child: Text(
                         'leftUntilExam'.tr(),
                         style: TextStyle(
-                          color: Colors.white.withValues(alpha: 0.9),
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
+                          color: Colors.white.withValues(alpha: 0.95),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
                     EditChip(
                       onTap: onEdit,
-                      background: Colors.white.withValues(alpha: 0.22),
+                      background: Colors.white.withValues(alpha: 0.25),
                       icon: Colors.white,
                     ),
                   ],
@@ -79,48 +88,63 @@ class DaysLeftCard extends StatelessWidget {
   }
 }
 
-class _DaysNumber extends StatelessWidget {
+class _DaysNumber extends StatefulWidget {
   final int? target;
   const _DaysNumber({required this.target});
 
   @override
+  State<_DaysNumber> createState() => _DaysNumberState();
+}
+
+class _DaysNumberState extends State<_DaysNumber> {
+  double _from = 0;
+
+  @override
+  void didUpdateWidget(covariant _DaysNumber old) {
+    super.didUpdateWidget(old);
+    if (widget.target != old.target) {
+      _from = (old.target ?? 0).toDouble();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final value = target ?? 0;
+    final value = widget.target ?? 0;
     return TweenAnimationBuilder<double>(
       duration: const Duration(milliseconds: 1100),
       curve: Curves.easeOutCubic,
-      tween: Tween<double>(begin: 0, end: value.toDouble()),
+      tween: Tween<double>(begin: _from, end: value.toDouble()),
       builder: (_, animated, _) {
-        final number = target == null ? '—' : animated.round().toString();
+        final number = widget.target == null ? '—' : animated.round().toString();
         return Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            ShaderMask(
-              shaderCallback: (rect) => const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [Colors.white, Color(0xFFFFE3E9)],
-              ).createShader(rect),
-              child: Text(
-                number,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 44,
-                  fontWeight: FontWeight.w900,
-                  height: 1,
-                  letterSpacing: -1.2,
-                ),
+            Text(
+              number,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 58,
+                fontWeight: FontWeight.w900,
+                height: 1,
+                letterSpacing: -2,
+                shadows: [
+                  Shadow(
+                    color: Colors.black.withValues(alpha: 0.25),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 10),
             Padding(
-              padding: const EdgeInsets.only(bottom: 6),
+              padding: const EdgeInsets.only(bottom: 10),
               child: Text(
                 'daysLabel'.tr(),
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.95),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w700,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
             ),

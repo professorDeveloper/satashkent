@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/blur_app_bar.dart';
 import '../bloc/competitions_bloc.dart';
 import '../bloc/competitions_event.dart';
 import '../bloc/competitions_state.dart';
@@ -32,27 +31,6 @@ class _CompetitionsView extends StatefulWidget {
 }
 
 class _CompetitionsViewState extends State<_CompetitionsView> {
-  final ScrollController scroll = ScrollController();
-  bool scrolled = false;
-
-  @override
-  void initState() {
-    super.initState();
-    scroll.addListener(onScroll);
-  }
-
-  @override
-  void dispose() {
-    scroll.removeListener(onScroll);
-    scroll.dispose();
-    super.dispose();
-  }
-
-  void onScroll() {
-    final s = scroll.offset > 6;
-    if (s != scrolled) setState(() => scrolled = s);
-  }
-
   Future<void> refresh() async {
     final bloc = context.read<CompetitionsBloc>();
     bloc.add(const CompetitionsRefreshed());
@@ -66,18 +44,17 @@ class _CompetitionsViewState extends State<_CompetitionsView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: BlurAppBar(title: 'tabCompetitions'.tr(), scrolled: scrolled),
+      appBar: AppBar(
+        title: Text('tabCompetitions'.tr()),
+        centerTitle: true,
+      ),
       body: BlocBuilder<CompetitionsBloc, CompetitionsState>(
         builder: (context, state) {
-          final topInset =
-              MediaQuery.of(context).padding.top + kToolbarHeight;
           return RefreshIndicator(
             color: AppColors.brand,
-            displacement: 20,
-            edgeOffset: topInset,
+            displacement: 36,
             onRefresh: refresh,
-            child: _Body(state: state, controller: scroll),
+            child: _Body(state: state),
           );
         },
       ),
@@ -87,17 +64,14 @@ class _CompetitionsViewState extends State<_CompetitionsView> {
 
 class _Body extends StatelessWidget {
   final CompetitionsState state;
-  final ScrollController controller;
-  const _Body({required this.state, required this.controller});
+  const _Body({required this.state});
 
   @override
   Widget build(BuildContext context) {
-    final topInset =
-        MediaQuery.of(context).padding.top + kToolbarHeight - 12;
     if (state.errorMessage != null && state.page.isEmpty) {
       return ListView(
-        controller: controller,
-        padding: EdgeInsets.fromLTRB(24, topInset + 40, 24, 32),
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding: const EdgeInsets.fromLTRB(24, 60, 24, 32),
         children: [
           Center(
             child: Text(
@@ -125,15 +99,13 @@ class _Body extends StatelessWidget {
     }
     if (state.page.isEmpty) {
       return ListView(
-        controller: controller,
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: EdgeInsets.fromLTRB(16, topInset, 16, 32),
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 32),
         children: const [CompetitionsEmpty()],
       );
     }
     return ListView.separated(
-      controller: controller,
-      padding: EdgeInsets.fromLTRB(16, topInset, 16, 32),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
       itemCount: state.page.items.length,
       separatorBuilder: (_, _) => const SizedBox(height: 12),
       itemBuilder: (_, i) => CompetitionCard(item: state.page.items[i]),

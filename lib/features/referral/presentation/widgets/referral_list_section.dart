@@ -9,33 +9,22 @@ class ReferralListSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tt = Theme.of(context).textTheme;
-    final muted =
-        Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6);
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Theme.of(context).dividerColor, width: 0.6),
-      ),
+    final scheme = Theme.of(context).colorScheme;
+    final muted = scheme.onSurface.withValues(alpha: 0.55);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(Icons.group_outlined, size: 18, color: muted),
-              const SizedBox(width: 8),
-              Text(
-                'yourReferrals'.tr(),
-                style: tt.titleMedium?.copyWith(fontWeight: FontWeight.w800),
-              ),
-            ],
+          Text(
+            'yourReferrals'.tr(),
+            style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  fontWeight: FontWeight.w800,
+                ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 20),
           if (items.isEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
+            Center(
               child: Text(
                 'noReferrals'.tr(),
                 style: TextStyle(fontSize: 13, color: muted),
@@ -61,14 +50,14 @@ class ReferralRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final on = Theme.of(context).colorScheme.onSurface;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
           Expanded(
             child: Text(
               item.name ?? '—',
               style: TextStyle(
-                fontSize: 13.5,
+                fontSize: 14,
                 fontWeight: FontWeight.w600,
                 color: on.withValues(alpha: 0.85),
               ),
@@ -78,7 +67,7 @@ class ReferralRow extends StatelessWidget {
             Text(
               item.state!,
               style: TextStyle(
-                fontSize: 11,
+                fontSize: 12,
                 color: on.withValues(alpha: 0.55),
               ),
             ),

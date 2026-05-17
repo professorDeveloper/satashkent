@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/widgets/blur_app_bar.dart';
 import '../../../auth/presentation/bloc/auth_bloc.dart';
 import '../../../auth/presentation/bloc/auth_event.dart';
 import '../../domain/entities/assessment_summary.dart';
@@ -39,27 +38,6 @@ class _ProfileView extends StatefulWidget {
 }
 
 class _ProfileViewState extends State<_ProfileView> {
-  final scroll = ScrollController();
-  bool scrolled = false;
-
-  @override
-  void initState() {
-    super.initState();
-    scroll.addListener(onScroll);
-  }
-
-  @override
-  void dispose() {
-    scroll.removeListener(onScroll);
-    scroll.dispose();
-    super.dispose();
-  }
-
-  void onScroll() {
-    final next = scroll.offset > 6;
-    if (next != scrolled) setState(() => scrolled = next);
-  }
-
   Future<void> refresh() async {
     final bloc = context.read<ProfileBloc>();
     bloc.add(const ProfileRefreshed());
@@ -104,19 +82,17 @@ class _ProfileViewState extends State<_ProfileView> {
         if (msg != null && msg.isNotEmpty) showSnack(msg);
       },
       child: Scaffold(
-        extendBodyBehindAppBar: true,
-        appBar: BlurAppBar(title: 'profile'.tr(), scrolled: scrolled),
+        appBar: AppBar(
+          title: Text('profile'.tr()),
+          centerTitle: true,
+        ),
         body: BlocBuilder<ProfileBloc, ProfileState>(
           builder: (context, state) {
-            final topInset =
-                MediaQuery.of(context).padding.top + kToolbarHeight - 12;
             return RefreshIndicator(
               color: AppColors.brand,
-              displacement: 20,
+              displacement: 36,
               onRefresh: refresh,
               child: _Body(
-                controller: scroll,
-                topInset: topInset,
                 state: state,
                 onRefreshBalance: refreshBalance,
                 onLogout: confirmLogout,
@@ -132,8 +108,6 @@ class _ProfileViewState extends State<_ProfileView> {
 }
 
 class _Body extends StatelessWidget {
-  final ScrollController controller;
-  final double topInset;
   final ProfileState state;
   final VoidCallback onRefreshBalance;
   final VoidCallback onLogout;
@@ -141,8 +115,6 @@ class _Body extends StatelessWidget {
   final VoidCallback onSettings;
 
   const _Body({
-    required this.controller,
-    required this.topInset,
     required this.state,
     required this.onRefreshBalance,
     required this.onLogout,
@@ -162,10 +134,9 @@ class _Body extends StatelessWidget {
     final user = state.user;
     if (user == null) {
       return ListView(
-        controller: controller,
         physics: const AlwaysScrollableScrollPhysics(),
         children: [
-          SizedBox(height: topInset + 100),
+          const SizedBox(height: 160),
           if (state.loading)
             const Center(child: CircularProgressIndicator(color: AppColors.brand))
           else
@@ -181,9 +152,8 @@ class _Body extends StatelessWidget {
       );
     }
     return ListView(
-      controller: controller,
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: EdgeInsets.only(top: topInset, bottom: 32),
+      padding: const EdgeInsets.only(bottom: 32),
       children: [
         ProfileHeaderRow(user: user, onEdit: onEdit),
         const SizedBox(height: 8),

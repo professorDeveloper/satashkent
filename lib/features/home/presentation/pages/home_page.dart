@@ -1,24 +1,24 @@
-import 'dart:ui';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../main_shell/presentation/widgets/main_tab_controller.dart';
+import '../../../notifications/presentation/bloc/notifications_bloc.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
 import '../widgets/bookmarked_section.dart';
+import '../widgets/competitions_card.dart';
 import '../widgets/days_left_card.dart';
 import '../widgets/exam_date_dialog.dart';
 import '../widgets/goal_score_card.dart';
 import '../widgets/goal_score_dialog.dart';
 import '../widgets/goal_university_card.dart';
 import '../widgets/last_test_card.dart';
-import '../widgets/roadmap_card.dart';
-import '../widgets/roadmap_locked_dialog.dart';
+import '../widgets/quick_access_section.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -41,29 +41,23 @@ class _HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<_HomeView> {
   final scroll = ScrollController();
-  bool scrolled = false;
 
   @override
   void initState() {
     super.initState();
-    scroll.addListener(onScroll);
+    getIt<NotificationsBloc>().add(const NotificationsRequested());
   }
 
   @override
   void dispose() {
-    scroll.removeListener(onScroll);
     scroll.dispose();
     super.dispose();
-  }
-
-  void onScroll() {
-    final next = scroll.offset > 6;
-    if (next != scrolled) setState(() => scrolled = next);
   }
 
   Future<void> refresh() async {
     final bloc = context.read<HomeBloc>();
     bloc.add(const HomeRefreshed());
+    getIt<NotificationsBloc>().add(const NotificationsRefreshed());
     try {
       await bloc.stream
           .firstWhere((s) => !s.loading)
@@ -103,7 +97,9 @@ class _HomeViewState extends State<_HomeView> {
     bloc.add(HomeExamDateSubmitted(picked));
   }
 
-  void openNotifications() => showSnack('comingSoon'.tr());
+  void openNotifications() => context.push('/notifications');
+
+  void openCompetitions() => getIt<MainTabController>().goto(1);
 
   @override
   Widget build(BuildContext context) {
@@ -115,9 +111,7 @@ class _HomeViewState extends State<_HomeView> {
         showSnack(_resolveMessage(msg));
       },
       child: Scaffold(
-        extendBodyBehindAppBar: true,
         appBar: _HomeAppBar(
-          scrolled: scrolled,
           name: context.select<HomeBloc, String?>((b) => b.state.user?.name),
           onNotifications: openNotifications,
         ),
@@ -125,15 +119,14 @@ class _HomeViewState extends State<_HomeView> {
           builder: (context, state) {
             return RefreshIndicator(
               color: AppColors.brand,
-              displacement: 28,
-              edgeOffset: 0,
+              displacement: 36,
               onRefresh: refresh,
               child: _DashboardList(
                 controller: scroll,
                 state: state,
                 onEditGoalScore: editGoalScore,
                 onEditExamDate: editExamDate,
-                onTapRoadmap: () => showRoadmapLockedDialog(context),
+                onOpenCompetitions: openCompetitions,
               ),
             );
           },
@@ -153,25 +146,23 @@ class _DashboardList extends StatelessWidget {
   final HomeState state;
   final VoidCallback onEditGoalScore;
   final VoidCallback onEditExamDate;
-  final VoidCallback onTapRoadmap;
+  final VoidCallback onOpenCompetitions;
 
   const _DashboardList({
     required this.controller,
     required this.state,
     required this.onEditGoalScore,
     required this.onEditExamDate,
-    required this.onTapRoadmap,
+    required this.onOpenCompetitions,
   });
 
   @override
   Widget build(BuildContext context) {
-    final topPad =
-        MediaQuery.of(context).padding.top + kToolbarHeight - 12;
     final user = state.user;
     return ListView(
       controller: controller,
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: EdgeInsets.fromLTRB(0, topPad, 0, 32),
+      padding: const EdgeInsets.fromLTRB(0, 12, 0, 32),
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -181,7 +172,7 @@ class _DashboardList extends StatelessWidget {
               onEdit: onEditExamDate,
             ),
           ),
-        ).animate().fadeIn(duration: 320.ms).slideY(begin: 0.08, end: 0),
+        ),
         const SizedBox(height: 12),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -204,74 +195,46 @@ class _DashboardList extends StatelessWidget {
               ),
             ],
           ),
-        ).animate(delay: 80.ms).fadeIn(duration: 320.ms).slideY(
-              begin: 0.08,
-              end: 0,
-            ),
+        ),
         const SizedBox(height: 12),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: RepaintBoundary(
             child: GoalUniversityCard(imageUrl: user?.goalUniversity),
           ),
-        ).animate(delay: 160.ms).fadeIn(duration: 320.ms).slideY(
-              begin: 0.08,
-              end: 0,
-            ),
-        const SizedBox(height: 12),
+        ),
+        const SizedBox(height: 8),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: RepaintBoundary(child: RoadmapCard(onTap: onTapRoadmap)),
-        ).animate(delay: 240.ms).fadeIn(duration: 320.ms).slideY(
-              begin: 0.08,
-              end: 0,
-            ),
+          child: RepaintBoundary(
+            child: CompetitionsCard(onTap: onOpenCompetitions),
+          ),
+        ),
+        const SizedBox(height: 12),
+        QuickAccessSection(
+          assessments: state.assessments,
+          onTap: (_) {},
+        ),
         const SizedBox(height: 22),
-        const BookmarkedSection()
-            .animate(delay: 320.ms)
-            .fadeIn(duration: 320.ms),
+        const BookmarkedSection(),
       ],
     );
   }
 }
 
 class _HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final bool scrolled;
   final String? name;
   final VoidCallback onNotifications;
 
-  const _HomeAppBar({
-    required this.scrolled,
-    required this.name,
-    required this.onNotifications,
-  });
+  const _HomeAppBar({required this.name, required this.onNotifications});
 
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final scaffoldBg = Theme.of(context).scaffoldBackgroundColor;
     return AppBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      scrolledUnderElevation: 0,
-      surfaceTintColor: Colors.transparent,
-      foregroundColor: scheme.onSurface,
       titleSpacing: 16,
-      flexibleSpace: scrolled
-          ? RepaintBoundary(
-              child: ClipRect(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                  child: Container(
-                    color: scaffoldBg.withValues(alpha: 0.78),
-                  ),
-                ),
-              ),
-            )
-          : null,
       title: Row(
         children: [
           const Text('👋', style: TextStyle(fontSize: 22)),
@@ -290,13 +253,66 @@ class _HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       actions: [
-        IconButton(
-          tooltip: 'notifications'.tr(),
-          onPressed: onNotifications,
-          icon: const Icon(Icons.notifications_none_rounded),
-        ),
+        _NotificationsButton(onTap: onNotifications),
         const SizedBox(width: 4),
       ],
+    );
+  }
+}
+
+class _NotificationsButton extends StatelessWidget {
+  final VoidCallback onTap;
+  const _NotificationsButton({required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<NotificationsBloc>.value(
+      value: getIt<NotificationsBloc>(),
+      child: BlocBuilder<NotificationsBloc, NotificationsState>(
+        builder: (context, state) {
+          final count = state.page.newTotal;
+          return Stack(
+            clipBehavior: Clip.none,
+            children: [
+              IconButton(
+                tooltip: 'notifications'.tr(),
+                onPressed: onTap,
+                icon: const Icon(Icons.notifications_none_rounded),
+              ),
+              if (count > 0)
+                Positioned(
+                  right: 6,
+                  top: 6,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 5,
+                      vertical: 1,
+                    ),
+                    constraints: const BoxConstraints(minWidth: 16),
+                    decoration: BoxDecoration(
+                      color: AppColors.brand,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: Theme.of(context).scaffoldBackgroundColor,
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Text(
+                      count > 99 ? '99+' : count.toString(),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w800,
+                        height: 1.2,
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
     );
   }
 }

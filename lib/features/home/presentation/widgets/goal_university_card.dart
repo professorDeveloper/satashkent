@@ -30,13 +30,13 @@ class GoalUniversityCard extends StatelessWidget {
               bottom: 14,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(14),
-                child: CachedNetworkImage(
-                  imageUrl: imageUrl!,
-                  fit: BoxFit.cover,
-                  errorWidget: (_, _, _) => Container(
-                    color: muted.withValues(alpha: 0.08),
-                    alignment: Alignment.center,
-                    child: Icon(
+                child: Container(
+                  color: muted.withValues(alpha: 0.05),
+                  alignment: Alignment.center,
+                  child: CachedNetworkImage(
+                    imageUrl: imageUrl!,
+                    fit: BoxFit.contain,
+                    errorWidget: (_, _, _) => Icon(
                       Icons.account_balance_rounded,
                       size: 38,
                       color: muted.withValues(alpha: 0.5),

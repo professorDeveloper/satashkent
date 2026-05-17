@@ -135,6 +135,19 @@ class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(foregroundColor: AppColors.brand),
       ),
+      sliderTheme: SliderThemeData(
+        activeTrackColor: AppColors.brand,
+        inactiveTrackColor: cs.onSurface.withValues(alpha: 0.15),
+        thumbColor: cs.onSurface,
+        overlayColor: AppColors.brand.withValues(alpha: 0.15),
+        trackHeight: 4,
+        thumbShape: const RoundSliderThumbShape(
+          enabledThumbRadius: 9,
+          elevation: 0,
+        ),
+        overlayShape: const RoundSliderOverlayShape(overlayRadius: 18),
+        valueIndicatorColor: AppColors.brand,
+      ),
       textTheme: TextTheme(
         bodyLarge: TextStyle(color: textPrimary),
         bodyMedium: TextStyle(color: textPrimary),

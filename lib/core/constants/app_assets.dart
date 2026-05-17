@@ -13,6 +13,8 @@ class AppAssets {
   static const String setScore = 'assets/images/set-score.png';
   static const String university = 'assets/images/university.png';
   static const String referal = 'assets/images/referal.png';
+  static const String hiImage = 'assets/images/hi-image.png';
+  static const String leaderboard = 'assets/images/leaderboard.png';
 
   static const String trophyLottie = 'assets/lotties/trophy.json';
 }

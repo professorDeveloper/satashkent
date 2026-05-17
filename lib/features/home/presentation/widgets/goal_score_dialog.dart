@@ -21,8 +21,6 @@ Future<({int math, int english})?> showGoalScoreDialog(
 
 const _min = 200.0;
 const _max = 800.0;
-const _mathColor = Color(0xFF1E88E5);
-const _englishColor = Color(0xFFE53935);
 
 class _GoalScoreDialog extends StatefulWidget {
   final int initialMath;
@@ -42,9 +40,12 @@ class _GoalScoreDialogState extends State<_GoalScoreDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return AppDialog(
       title: 'myGoalScore'.tr(),
       submitLabel: 'submit'.tr(),
+      submitBackground: scheme.onSurface,
+      submitForeground: scheme.surface,
       onSubmit: () => Navigator.of(context).pop(
         (math: math.round(), english: english.round()),
       ),
@@ -54,22 +55,20 @@ class _GoalScoreDialogState extends State<_GoalScoreDialog> {
           Center(
             child: Image.asset(
               AppAssets.setScore,
-              height: 130,
+              height: 140,
               fit: BoxFit.contain,
             ),
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 4),
           _ScoreSlider(
             label: 'mathScore'.tr(),
             value: math,
-            color: _mathColor,
             onChanged: (v) => setState(() => math = v),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           _ScoreSlider(
             label: 'englishScore'.tr(),
             value: english,
-            color: _englishColor,
             onChanged: (v) => setState(() => english = v),
           ),
         ],
@@ -81,12 +80,10 @@ class _GoalScoreDialogState extends State<_GoalScoreDialog> {
 class _ScoreSlider extends StatelessWidget {
   final String label;
   final double value;
-  final Color color;
   final ValueChanged<double> onChanged;
   const _ScoreSlider({
     required this.label,
     required this.value,
-    required this.color,
     required this.onChanged,
   });
 
@@ -112,26 +109,13 @@ class _ScoreSlider extends StatelessWidget {
             ],
           ),
         ),
-        SliderTheme(
-          data: SliderTheme.of(context).copyWith(
-            activeTrackColor: color,
-            inactiveTrackColor: scheme.onSurface.withValues(alpha: 0.15),
-            thumbColor: scheme.onSurface,
-            overlayColor: color.withValues(alpha: 0.18),
-            trackHeight: 4,
-            thumbShape: const RoundSliderThumbShape(
-              enabledThumbRadius: 8,
-              elevation: 2,
-            ),
-          ),
-          child: Slider(
+        Slider(
             value: value,
             min: _min,
             max: _max,
             divisions: 60,
             onChanged: onChanged,
           ),
-        ),
       ],
     );
   }

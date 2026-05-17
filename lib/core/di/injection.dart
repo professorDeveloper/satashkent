@@ -20,6 +20,7 @@ import '../../features/home/domain/usecases/get_last_exam_result_usecase.dart';
 import '../../features/home/domain/usecases/set_exam_date_usecase.dart';
 import '../../features/home/domain/usecases/set_goal_score_usecase.dart';
 import '../../features/home/presentation/bloc/home_bloc.dart';
+import '../../features/main_shell/presentation/widgets/main_tab_controller.dart';
 import '../../features/auth/data/repositories/auth_repository_impl.dart';
 import '../../features/auth/domain/repositories/auth_repository.dart';
 import '../../features/auth/domain/usecases/forgot_password_usecase.dart';
@@ -38,6 +39,12 @@ import '../../features/profile/domain/usecases/update_profile_image_usecase.dart
 import '../../features/profile/domain/usecases/update_profile_usecase.dart';
 import '../../features/profile/presentation/bloc/edit_profile_bloc.dart';
 import '../../features/profile/presentation/bloc/profile_bloc.dart';
+import '../../features/notifications/data/datasources/notifications_remote_data_source.dart';
+import '../../features/notifications/data/repositories/notifications_repository_impl.dart';
+import '../../features/notifications/domain/repositories/notifications_repository.dart';
+import '../../features/notifications/domain/usecases/get_notifications_usecase.dart';
+import '../../features/notifications/domain/usecases/mark_notification_read_usecase.dart';
+import '../../features/notifications/presentation/bloc/notifications_bloc.dart';
 import '../../features/referral/data/datasources/referral_remote_data_source.dart';
 
 final getIt = GetIt.instance;
@@ -45,6 +52,7 @@ final getIt = GetIt.instance;
 Future<void> configureDependencies() async {
   getIt.registerSingleton<HiveService>(HiveService());
   getIt.registerSingleton<ThemeController>(ThemeController(getIt()));
+  getIt.registerSingleton<MainTabController>(MainTabController());
 
   final dio = DioClient.instance;
   dio.interceptors.add(LoggingInterceptor());
@@ -76,6 +84,9 @@ Future<void> configureDependencies() async {
   getIt.registerSingleton<HomeRemoteDataSource>(
     HomeRemoteDataSource(dio: getIt<Dio>()),
   );
+  getIt.registerSingleton<NotificationsRemoteDataSource>(
+    NotificationsRemoteDataSource(dio: getIt<Dio>()),
+  );
 
   getIt.registerSingleton<AuthRepository>(
     AuthRepositoryImpl(getIt<AuthRemoteDataSource>(), getIt<HiveService>()),
@@ -91,6 +102,16 @@ Future<void> configureDependencies() async {
   );
   getIt.registerSingleton<HomeRepository>(
     HomeRepositoryImpl(getIt<HomeRemoteDataSource>(), getIt<HiveService>()),
+  );
+  getIt.registerSingleton<NotificationsRepository>(
+    NotificationsRepositoryImpl(getIt<NotificationsRemoteDataSource>()),
+  );
+
+  getIt.registerSingleton<GetNotificationsUseCase>(
+    GetNotificationsUseCase(getIt<NotificationsRepository>()),
+  );
+  getIt.registerSingleton<MarkNotificationReadUseCase>(
+    MarkNotificationReadUseCase(getIt<NotificationsRepository>()),
   );
 
   getIt.registerSingleton<GetActiveCompetitionsUseCase>(
@@ -159,8 +180,15 @@ Future<void> configureDependencies() async {
       getActiveCompetitionsUseCase: getIt<GetActiveCompetitionsUseCase>(),
     ),
   );
+  getIt.registerLazySingleton<NotificationsBloc>(
+    () => NotificationsBloc(
+      getNotificationsUseCase: getIt<GetNotificationsUseCase>(),
+      markNotificationReadUseCase: getIt<MarkNotificationReadUseCase>(),
+    ),
+  );
   getIt.registerFactory<HomeBloc>(
     () => HomeBloc(
+      getProfileUseCase: getIt<GetProfileUseCase>(),
       getAssessmentsSummaryUseCase: getIt<GetAssessmentsSummaryUseCase>(),
       getLastExamResultUseCase: getIt<GetLastExamResultUseCase>(),
       setGoalScoreUseCase: getIt<SetGoalScoreUseCase>(),

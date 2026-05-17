@@ -7,6 +7,8 @@ class AppDialog extends StatelessWidget {
   final Widget child;
   final String submitLabel;
   final VoidCallback? onSubmit;
+  final Color? submitBackground;
+  final Color? submitForeground;
 
   const AppDialog({
     super.key,
@@ -14,6 +16,8 @@ class AppDialog extends StatelessWidget {
     required this.child,
     required this.submitLabel,
     this.onSubmit,
+    this.submitBackground,
+    this.submitForeground,
   });
 
   @override

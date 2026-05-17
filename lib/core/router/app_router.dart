@@ -11,6 +11,7 @@ import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
 import '../../features/intro/presentation/pages/intro_page.dart';
 import '../../features/main_shell/presentation/pages/main_shell_page.dart';
+import '../../features/notifications/presentation/pages/notifications_page.dart';
 import '../../features/profile/presentation/pages/edit_profile_page.dart';
 import '../../features/referral/presentation/pages/referral_page.dart';
 import '../../features/profile/presentation/settings/pages/settings_page.dart';
@@ -79,6 +80,11 @@ class AppRouter {
         GoRoute(
           path: '/edit-profile',
           builder: (c, _) => EditProfilePage(key: _localeKey(c, 'edit')),
+        ),
+        GoRoute(
+          path: '/notifications',
+          builder: (c, _) =>
+              NotificationsScreen(key: _localeKey(c, 'notifications')),
         ),
       ],
     );
