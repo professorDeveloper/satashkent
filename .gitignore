@@ -46,7 +46,6 @@ app.*.map.json
 /android/app/release
 
 # Env / secrets
-.env
 .env.local
 
 # Codegen
