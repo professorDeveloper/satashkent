@@ -9,18 +9,17 @@ class LogoutBigButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Material(
-      color: Colors.transparent,
-      borderRadius: BorderRadius.circular(14),
+      color: scheme.surface,
+      borderRadius: BorderRadius.circular(18),
       child: InkWell(
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(18),
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
-            border:
-                Border.all(color: Theme.of(context).dividerColor, width: 0.6),
+            borderRadius: BorderRadius.circular(18),
           ),
           child: Row(
             children: [

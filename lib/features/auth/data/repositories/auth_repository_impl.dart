@@ -76,7 +76,6 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       await _remote.logout();
     } on DioException catch (_) {
-      // ignore: remote logout failure shouldn't block local clear
     }
     await _hive.clearAuth();
   }
@@ -86,7 +85,7 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       await _remote.forgotPassword(
         login: login.trim(),
-        url: AppConstants.webBaseUrl,
+        url: "https://1600.satashkent.uz",
       );
       return const Success(true);
     } on DioException catch (e) {

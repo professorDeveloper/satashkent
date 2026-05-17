@@ -5,7 +5,6 @@ class AppConstants {
 
   static String get baseUrl => 'https://api.satashkent.uz/user-api';
 
-  static String get webBaseUrl => 'https://1600.satashkent.uz';
 
   static String? get devLogin => dotenv.maybeGet('DEV_LOGIN') ?? "saikou";
 

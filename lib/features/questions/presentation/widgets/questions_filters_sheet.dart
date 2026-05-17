@@ -54,14 +54,12 @@ class _FiltersSheetState extends State<_FiltersSheet> {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final muted = scheme.onSurface.withValues(alpha: 0.55);
+    final maxHeight = MediaQuery.of(context).size.height * 0.85;
     return SafeArea(
       top: false,
-      child: DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        minChildSize: 0.5,
-        maxChildSize: 0.9,
-        expand: false,
-        builder: (_, scroll) => Column(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: maxHeight),
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Center(
@@ -100,102 +98,104 @@ class _FiltersSheetState extends State<_FiltersSheet> {
               ),
             ),
             Divider(height: 1, color: Theme.of(context).dividerColor),
-            Expanded(
-              child: ListView(
-                controller: scroll,
-                padding: const EdgeInsets.fromLTRB(20, 16, 20, 16),
-                children: [
-                  _SectionTitle('complexity'.tr()),
-                  const SizedBox(height: 10),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      for (final c in [
-                        QuestionComplexity.easy,
-                        QuestionComplexity.medium,
-                        QuestionComplexity.hard,
-                      ])
-                        _Chip(
-                          label: QuestionLabels.complexity(c),
-                          color: QuestionLabels.complexityColor(c),
-                          selected: complexities.contains(c),
-                          onTap: () => setState(() {
-                            if (complexities.contains(c)) {
-                              complexities.remove(c);
-                            } else {
-                              complexities = {c};
-                            }
-                          }),
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 22),
-                  _SectionTitle('questionType'.tr()),
-                  const SizedBox(height: 10),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      for (final t in [
-                        QuestionType.singleChoice,
-                        QuestionType.multiChoice,
-                        QuestionType.input,
-                        QuestionType.multiInput,
-                        QuestionType.inputOption,
-                      ])
-                        _Chip(
-                          label: QuestionLabels.type(t),
-                          color: AppColors.brand,
-                          selected: types.contains(t),
-                          onTap: () => setState(() {
-                            if (types.contains(t)) {
-                              types.remove(t);
-                            } else {
-                              types = {t};
-                            }
-                          }),
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 22),
-                  _SectionTitle('subjectLabel'.tr()),
-                  const SizedBox(height: 10),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      for (final s in [
-                        QuestionSubject.math,
-                        QuestionSubject.english,
-                        QuestionSubject.apCalculus,
-                        QuestionSubject.apChemistry,
-                        QuestionSubject.apCsA,
-                        QuestionSubject.apMacro,
-                        QuestionSubject.apMicro,
-                        QuestionSubject.apBiology,
-                        QuestionSubject.apStatistics,
-                        QuestionSubject.apPhysicsC,
-                      ])
-                        _Chip(
-                          label: QuestionLabels.subject(s),
-                          color: AppColors.brand,
-                          selected: subjects.contains(s),
-                          onTap: () => setState(() {
-                            if (subjects.contains(s)) {
-                              subjects.remove(s);
-                            } else {
-                              subjects = {s};
-                            }
-                          }),
-                        ),
-                    ],
-                  ),
-                ],
+            Flexible(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _SectionTitle('complexity'.tr()),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final c in [
+                          QuestionComplexity.easy,
+                          QuestionComplexity.medium,
+                          QuestionComplexity.hard,
+                        ])
+                          _Chip(
+                            label: QuestionLabels.complexity(c),
+                            color: QuestionLabels.complexityColor(c),
+                            selected: complexities.contains(c),
+                            onTap: () => setState(() {
+                              if (complexities.contains(c)) {
+                                complexities.remove(c);
+                              } else {
+                                complexities = {c};
+                              }
+                            }),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    _SectionTitle('questionType'.tr()),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final t in [
+                          QuestionType.singleChoice,
+                          QuestionType.multiChoice,
+                          QuestionType.input,
+                          QuestionType.multiInput,
+                          QuestionType.inputOption,
+                        ])
+                          _Chip(
+                            label: QuestionLabels.type(t),
+                            color: AppColors.brand,
+                            selected: types.contains(t),
+                            onTap: () => setState(() {
+                              if (types.contains(t)) {
+                                types.remove(t);
+                              } else {
+                                types = {t};
+                              }
+                            }),
+                          ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    _SectionTitle('subjectLabel'.tr()),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final s in [
+                          QuestionSubject.math,
+                          QuestionSubject.english,
+                          QuestionSubject.apCalculus,
+                          QuestionSubject.apChemistry,
+                          QuestionSubject.apCsA,
+                          QuestionSubject.apMacro,
+                          QuestionSubject.apMicro,
+                          QuestionSubject.apBiology,
+                          QuestionSubject.apStatistics,
+                          QuestionSubject.apPhysicsC,
+                        ])
+                          _Chip(
+                            label: QuestionLabels.subject(s),
+                            color: AppColors.brand,
+                            selected: subjects.contains(s),
+                            onTap: () => setState(() {
+                              if (subjects.contains(s)) {
+                                subjects.remove(s);
+                              } else {
+                                subjects = {s};
+                              }
+                            }),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 16),
               child: FilledButton(
                 onPressed: _apply,
                 style: FilledButton.styleFrom(
