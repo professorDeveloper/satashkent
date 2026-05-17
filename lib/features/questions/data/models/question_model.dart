@@ -66,6 +66,7 @@ class QuestionEnums {
       case 'unattempted':
       case 'new':
         return QuestionStatus.newOne;
+      case 'right':
       case 'correct':
         return QuestionStatus.correct;
       case 'wrong':
@@ -81,7 +82,7 @@ class QuestionEnums {
       case QuestionStatus.newOne:
         return 'unattempted';
       case QuestionStatus.correct:
-        return 'correct';
+        return 'right';
       case QuestionStatus.wrong:
         return 'wrong';
       case QuestionStatus.unknown:
