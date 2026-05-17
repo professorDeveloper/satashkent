@@ -49,7 +49,13 @@ import '../../features/notifications/presentation/bloc/notifications_bloc.dart';
 import '../../features/questions/data/datasources/questions_remote_data_source.dart';
 import '../../features/questions/data/repositories/questions_repository_impl.dart';
 import '../../features/questions/domain/repositories/questions_repository.dart';
+import '../../features/questions/domain/usecases/get_attempts_usecase.dart';
+import '../../features/questions/domain/usecases/get_comments_usecase.dart';
+import '../../features/questions/domain/usecases/get_question_detail_usecase.dart';
 import '../../features/questions/domain/usecases/get_questions_usecase.dart';
+import '../../features/questions/domain/usecases/post_comment_usecase.dart';
+import '../../features/questions/domain/usecases/submit_answer_usecase.dart';
+import '../../features/questions/presentation/bloc/question_detail_bloc.dart';
 import '../../features/questions/presentation/bloc/questions_bloc.dart';
 import '../../features/referral/data/datasources/referral_remote_data_source.dart';
 
@@ -128,6 +134,21 @@ Future<void> configureDependencies() async {
   getIt.registerSingleton<GetQuestionsUseCase>(
     GetQuestionsUseCase(getIt<QuestionsRepository>()),
   );
+  getIt.registerSingleton<GetQuestionDetailUseCase>(
+    GetQuestionDetailUseCase(getIt<QuestionsRepository>()),
+  );
+  getIt.registerSingleton<SubmitAnswerUseCase>(
+    SubmitAnswerUseCase(getIt<QuestionsRepository>()),
+  );
+  getIt.registerSingleton<GetAttemptsUseCase>(
+    GetAttemptsUseCase(getIt<QuestionsRepository>()),
+  );
+  getIt.registerSingleton<GetCommentsUseCase>(
+    GetCommentsUseCase(getIt<QuestionsRepository>()),
+  );
+  getIt.registerSingleton<PostCommentUseCase>(
+    PostCommentUseCase(getIt<QuestionsRepository>()),
+  );
 
   getIt.registerSingleton<GetActiveCompetitionsUseCase>(
     GetActiveCompetitionsUseCase(getIt<CompetitionsRepository>()),
@@ -200,6 +221,16 @@ Future<void> configureDependencies() async {
   );
   getIt.registerFactory<QuestionsBloc>(
     () => QuestionsBloc(getQuestionsUseCase: getIt<GetQuestionsUseCase>()),
+  );
+  getIt.registerFactoryParam<QuestionDetailBloc, String, void>(
+    (questionId, _) => QuestionDetailBloc(
+      questionId: questionId,
+      getQuestionDetail: getIt<GetQuestionDetailUseCase>(),
+      submitAnswer: getIt<SubmitAnswerUseCase>(),
+      getAttempts: getIt<GetAttemptsUseCase>(),
+      getComments: getIt<GetCommentsUseCase>(),
+      postComment: getIt<PostCommentUseCase>(),
+    ),
   );
   getIt.registerLazySingleton<NotificationsBloc>(
     () => NotificationsBloc(

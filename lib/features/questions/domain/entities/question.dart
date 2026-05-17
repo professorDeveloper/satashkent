@@ -45,7 +45,7 @@ class Question extends Equatable {
     this.type = QuestionType.unknown,
     this.complexity = QuestionComplexity.unknown,
     this.subject = QuestionSubject.unknown,
-    this.status = QuestionStatus.newOne,
+    this.status = QuestionStatus.unknown,
   });
 
   @override

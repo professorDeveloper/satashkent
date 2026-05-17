@@ -73,7 +73,7 @@ class QuestionEnums {
       case 'incorrect':
         return QuestionStatus.wrong;
       default:
-        return QuestionStatus.newOne;
+        return QuestionStatus.unknown;
     }
   }
 

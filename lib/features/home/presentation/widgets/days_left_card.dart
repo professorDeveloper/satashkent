@@ -79,7 +79,7 @@ class DaysLeftCard extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            isEmpty ? '+ ${'setExamDate'.tr()}  →' : 'leftUntilExam'.tr(),
+                            isEmpty ? '+ ${'setExamDate'.tr()} ->' : 'leftUntilExam'.tr(),
                             style: TextStyle(
                               color: Colors.white.withValues(alpha: 0.95),
                               fontSize: isEmpty ? 16 : 15,

@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -8,6 +9,7 @@ import '../bloc/questions_bloc.dart';
 import '../widgets/question_card.dart';
 import '../widgets/questions_filters_sheet.dart';
 import '../widgets/questions_search_bar.dart';
+import '../widgets/questions_status_chips.dart';
 import '../widgets/questions_status_dropdown.dart';
 
 class QuestionsPage extends StatelessWidget {
@@ -63,11 +65,10 @@ class _QuestionsViewState extends State<_QuestionsView> {
 
   Future<void> _refresh() async {
     final bloc = context.read<QuestionsBloc>();
+    final done = bloc.stream.firstWhere((s) => !s.loading);
     bloc.add(const QuestionsRefreshed());
     try {
-      await bloc.stream
-          .firstWhere((s) => !s.loading)
-          .timeout(const Duration(seconds: 15));
+      await done.timeout(const Duration(seconds: 15));
     } catch (_) {}
   }
 
@@ -117,17 +118,21 @@ class _QuestionsViewState extends State<_QuestionsView> {
                         ),
                         const SizedBox(width: 10),
                         QuestionsTotalBadge(total: state.total),
-                        const Spacer(),
-                        QuestionsStatusDropdown(
-                          value: state.filter.status,
-                          onChanged: (s) => bloc.add(QuestionsFilterChanged(
-                            state.filter.copyWith(
-                              status: s,
-                              clearStatus: s == null,
-                            ),
-                          )),
-                        ),
                       ],
+                    ),
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: QuestionsStatusChips(
+                      value: state.filter.status,
+                      onChanged: (s) => bloc.add(QuestionsFilterChanged(
+                        state.filter.copyWith(
+                          status: s,
+                          clearStatus: s == null,
+                        ),
+                      )),
                     ),
                   ),
                 ),
@@ -203,6 +208,37 @@ class _QuestionsViewState extends State<_QuestionsView> {
                       delegate: SliverChildBuilderDelegate(
                         (_, i) {
                           if (i == state.items.length) {
+                            if (state.errorMessage != null) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                  horizontal: 8,
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      state.errorMessage!,
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withValues(alpha: 0.7),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    TextButton(
+                                      onPressed: () => bloc.add(
+                                        const QuestionsNextPageRequested(),
+                                      ),
+                                      child: Text('retry'.tr()),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
                             return Padding(
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               child: state.loadingMore
@@ -214,13 +250,19 @@ class _QuestionsViewState extends State<_QuestionsView> {
                                   : const SizedBox.shrink(),
                             );
                           }
+                          final q = state.items[i];
                           return Padding(
                             padding: EdgeInsets.only(
                               top: i == 0 ? 0 : 10,
                             ),
                             child: QuestionCard(
                               index: i + 1,
-                              question: state.items[i],
+                              question: q,
+                              onTap: () async {
+                                await context.push('/question/${q.id}');
+                                if (!context.mounted) return;
+                                bloc.add(const QuestionsRefreshed());
+                              },
                             ),
                           );
                         },

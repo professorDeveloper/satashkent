@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-class MainTabController extends ChangeNotifier {
+    class MainTabController extends ChangeNotifier {
   int _index = 0;
   int get index => _index;
 

@@ -13,6 +13,7 @@ import '../../features/intro/presentation/pages/intro_page.dart';
 import '../../features/main_shell/presentation/pages/main_shell_page.dart';
 import '../../features/notifications/presentation/pages/notifications_page.dart';
 import '../../features/profile/presentation/pages/edit_profile_page.dart';
+import '../../features/questions/presentation/pages/question_detail_page.dart';
 import '../../features/referral/presentation/pages/referral_page.dart';
 import '../../features/profile/presentation/settings/pages/settings_page.dart';
 import '../../features/language/presentation/pages/language_select_page.dart';
@@ -85,6 +86,13 @@ class AppRouter {
           path: '/notifications',
           builder: (c, _) =>
               NotificationsScreen(key: _localeKey(c, 'notifications')),
+        ),
+        GoRoute(
+          path: '/question/:id',
+          builder: (c, st) => QuestionDetailPage(
+            key: ValueKey('q-${st.pathParameters['id']}'),
+            questionId: st.pathParameters['id']!,
+          ),
         ),
       ],
     );
