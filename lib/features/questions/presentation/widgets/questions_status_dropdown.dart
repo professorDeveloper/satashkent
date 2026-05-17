@@ -17,87 +17,143 @@ class QuestionsStatusDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return Container(
-      height: 36,
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      decoration: BoxDecoration(
-        color: scheme.surface,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Theme.of(context).dividerColor, width: 0.6),
+    final options = _options();
+    final current =
+        options.firstWhere((o) => o.status == value, orElse: () => options.first);
+    return PopupMenuButton<QuestionStatus?>(
+      tooltip: '',
+      position: PopupMenuPosition.under,
+      offset: const Offset(0, 8),
+      color: scheme.surface,
+      elevation: 6,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Theme.of(context).dividerColor, width: 0.6),
       ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<QuestionStatus?>(
-          value: value,
-          isDense: true,
-          icon: Icon(
-            Icons.keyboard_arrow_down_rounded,
-            size: 18,
-            color: scheme.onSurface.withValues(alpha: 0.6),
+      padding: EdgeInsets.zero,
+      menuPadding: const EdgeInsets.symmetric(vertical: 4),
+      itemBuilder: (_) => [
+        for (final option in options)
+          PopupMenuItem<QuestionStatus?>(
+            value: option.status,
+            height: 38,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: _MenuItem(option: option, selected: option.status == value),
           ),
-          selectedItemBuilder: (_) => [
-            _selectedText('allQuestions'.tr(), scheme.onSurface),
-            _selectedText(
-              QuestionLabels.status(QuestionStatus.newOne),
-              const Color(0xFF2F7BD8),
-            ),
-            _selectedText(
-              QuestionLabels.status(QuestionStatus.wrong),
-              const Color(0xFFD63A3A),
-            ),
-            _selectedText(
-              QuestionLabels.status(QuestionStatus.correct),
-              const Color(0xFF239B5C),
-            ),
-          ],
-          items: [
-            DropdownMenuItem(
-              value: null,
-              child: Text(
-                'allQuestions'.tr(),
-                style: const TextStyle(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w700,
-                ),
+      ],
+      onSelected: onChanged,
+      child: Container(
+        height: 36,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: BoxDecoration(
+          color: scheme.surface,
+          borderRadius: BorderRadius.circular(10),
+          border:
+              Border.all(color: Theme.of(context).dividerColor, width: 0.6),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _Dot(color: current.color),
+            const SizedBox(width: 8),
+            Text(
+              current.label,
+              style: TextStyle(
+                fontSize: 12.5,
+                fontWeight: FontWeight.w800,
+                color: current.color,
               ),
             ),
-            _statusItem(QuestionStatus.newOne, const Color(0xFF2F7BD8)),
-            _statusItem(QuestionStatus.wrong, const Color(0xFFD63A3A)),
-            _statusItem(QuestionStatus.correct, const Color(0xFF239B5C)),
+            const SizedBox(width: 6),
+            Icon(
+              Icons.keyboard_arrow_down_rounded,
+              size: 18,
+              color: scheme.onSurface.withValues(alpha: 0.55),
+            ),
           ],
-          onChanged: onChanged,
         ),
       ),
     );
   }
 
-  Widget _selectedText(String text, Color color) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 12.5,
-          fontWeight: FontWeight.w700,
-          color: color,
+  List<_StatusOption> _options() => [
+        _StatusOption(
+          status: null,
+          label: 'allQuestions'.tr(),
+          color: AppColors.brand,
         ),
-      ),
+        _StatusOption(
+          status: QuestionStatus.newOne,
+          label: QuestionLabels.status(QuestionStatus.newOne),
+          color: const Color(0xFF2F7BD8),
+        ),
+        _StatusOption(
+          status: QuestionStatus.wrong,
+          label: QuestionLabels.status(QuestionStatus.wrong),
+          color: const Color(0xFFD63A3A),
+        ),
+        _StatusOption(
+          status: QuestionStatus.correct,
+          label: QuestionLabels.status(QuestionStatus.correct),
+          color: const Color(0xFF239B5C),
+        ),
+      ];
+}
+
+class _StatusOption {
+  final QuestionStatus? status;
+  final String label;
+  final Color color;
+  const _StatusOption({
+    required this.status,
+    required this.label,
+    required this.color,
+  });
+}
+
+class _MenuItem extends StatelessWidget {
+  final _StatusOption option;
+  final bool selected;
+  const _MenuItem({required this.option, required this.selected});
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Row(
+      children: [
+        _Dot(color: option.color),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Text(
+            option.label,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: option.color,
+            ),
+          ),
+        ),
+        if (selected)
+          Icon(
+            Icons.check_rounded,
+            size: 16,
+            color: scheme.onSurface.withValues(alpha: 0.75),
+          ),
+      ],
     );
   }
+}
 
-  DropdownMenuItem<QuestionStatus?> _statusItem(
-    QuestionStatus status,
-    Color color,
-  ) {
-    return DropdownMenuItem<QuestionStatus?>(
-      value: status,
-      child: Text(
-        QuestionLabels.status(status),
-        style: TextStyle(
-          fontSize: 12.5,
-          fontWeight: FontWeight.w700,
-          color: color,
-        ),
-      ),
+class _Dot extends StatelessWidget {
+  final Color color;
+  const _Dot({required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 8,
+      height: 8,
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     );
   }
 }

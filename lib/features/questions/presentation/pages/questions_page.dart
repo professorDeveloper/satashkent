@@ -9,7 +9,6 @@ import '../bloc/questions_bloc.dart';
 import '../widgets/question_card.dart';
 import '../widgets/questions_filters_sheet.dart';
 import '../widgets/questions_search_bar.dart';
-import '../widgets/questions_status_chips.dart';
 import '../widgets/questions_status_dropdown.dart';
 
 class QuestionsPage extends StatelessWidget {
@@ -118,21 +117,17 @@ class _QuestionsViewState extends State<_QuestionsView> {
                         ),
                         const SizedBox(width: 10),
                         QuestionsTotalBadge(total: state.total),
-                      ],
-                    ),
-                  ),
-                ),
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: QuestionsStatusChips(
-                      value: state.filter.status,
-                      onChanged: (s) => bloc.add(QuestionsFilterChanged(
-                        state.filter.copyWith(
-                          status: s,
-                          clearStatus: s == null,
+                        const Spacer(),
+                        QuestionsStatusDropdown(
+                          value: state.filter.status,
+                          onChanged: (s) => bloc.add(QuestionsFilterChanged(
+                            state.filter.copyWith(
+                              status: s,
+                              clearStatus: s == null,
+                            ),
+                          )),
                         ),
-                      )),
+                      ],
                     ),
                   ),
                 ),
