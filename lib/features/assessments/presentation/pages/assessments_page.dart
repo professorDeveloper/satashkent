@@ -2,7 +2,6 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/theme/app_colors.dart';
 import '../widgets/assessment_section_card.dart';
 
 class AssessmentsPage extends StatelessWidget {
@@ -13,31 +12,26 @@ class AssessmentsPage extends StatelessWidget {
       route: '/assessments/placements',
       titleKey: 'placements',
       icon: Icons.place_outlined,
-      accent: AppColors.brand,
     ),
     _SectionData(
       route: '/assessments/level-checks',
       titleKey: 'levelChecks',
       icon: Icons.bar_chart_rounded,
-      accent: AppColors.brand,
     ),
     _SectionData(
       route: '/assessments/homework',
       titleKey: 'homework',
       icon: Icons.checklist_rounded,
-      accent: AppColors.brand,
     ),
     _SectionData(
       route: '/assessments/exams',
       titleKey: 'exams',
       icon: Icons.assignment_outlined,
-      accent: AppColors.brand,
     ),
     _SectionData(
       route: '/assessments/last-dances',
       titleKey: 'lastDances',
       icon: Icons.school_outlined,
-      accent: AppColors.brand,
     ),
   ];
 
@@ -58,7 +52,6 @@ class AssessmentsPage extends StatelessWidget {
           return AssessmentSectionCard(
             title: s.titleKey.tr(),
             icon: s.icon,
-            accent: s.accent,
             onTap: () => context.push(s.route),
           );
         },
@@ -71,12 +64,10 @@ class _SectionData {
   final String route;
   final String titleKey;
   final IconData icon;
-  final Color accent;
 
   const _SectionData({
     required this.route,
     required this.titleKey,
     required this.icon,
-    required this.accent,
   });
 }

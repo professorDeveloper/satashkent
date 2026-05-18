@@ -12,7 +12,6 @@ class HomeworkPage extends StatelessWidget {
       type: AssessmentType.homework,
       titleKey: 'homework',
       emptyMessageKey: 'noActiveHomework',
-      itemIcon: Icons.checklist_rounded,
     );
   }
 }

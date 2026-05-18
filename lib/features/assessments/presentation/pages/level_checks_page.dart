@@ -12,7 +12,6 @@ class LevelChecksPage extends StatelessWidget {
       type: AssessmentType.levelChecks,
       titleKey: 'levelChecks',
       emptyMessageKey: 'noActiveLevelChecks',
-      itemIcon: Icons.bar_chart_rounded,
     );
   }
 }

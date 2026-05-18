@@ -1,41 +1,70 @@
 import 'package:equatable/equatable.dart';
 
+class AssessmentSection extends Equatable {
+  final String id;
+  final String name;
+  final String type;
+  final int total;
+  final int submitted;
+  final String state;
+
+  const AssessmentSection({
+    required this.id,
+    required this.name,
+    required this.type,
+    this.total = 0,
+    this.submitted = 0,
+    this.state = '',
+  });
+
+  @override
+  List<Object?> get props => [id, name, type, total, submitted, state];
+}
+
 class AssessmentItem extends Equatable {
   final String id;
-  final String? title;
-  final String? subject;
-  final String? state;
-  final num? score;
-  final num? maxScore;
-  final DateTime? startsAt;
-  final DateTime? endsAt;
-  final DateTime? createdAt;
+  final String type;
+  final String name;
+  final String state;
+  final DateTime? finishesAt;
+  final int total;
+  final int right;
+  final List<AssessmentSection> sections;
+  final bool couldReview;
+  final bool fullScreenRequired;
+  final bool desmosEnabled;
 
   const AssessmentItem({
     required this.id,
-    this.title,
-    this.subject,
-    this.state,
-    this.score,
-    this.maxScore,
-    this.startsAt,
-    this.endsAt,
-    this.createdAt,
+    this.type = '',
+    this.name = '',
+    this.state = '',
+    this.finishesAt,
+    this.total = 0,
+    this.right = 0,
+    this.sections = const [],
+    this.couldReview = false,
+    this.fullScreenRequired = false,
+    this.desmosEnabled = false,
   });
 
-  bool get isActive => state == 'new' || state == 'active';
+  bool get isPlanned => state == 'planned';
+  bool get isActive => state == 'active';
+  bool get isPassed => state == 'passed';
 
   @override
   List<Object?> get props => [
         id,
-        title,
-        subject,
+        type,
+        name,
         state,
-        score,
-        maxScore,
-        startsAt,
-        endsAt,
-        createdAt,
+        finishesAt,
+        total,
+        right,
+        sections,
+        couldReview,
+        fullScreenRequired,
+        desmosEnabled,
       ];
 }
 

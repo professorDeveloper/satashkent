@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_colors.dart';
+
 class AssessmentSectionCard extends StatelessWidget {
   final String title;
   final IconData icon;
-  final Color accent;
   final int? badgeCount;
   final VoidCallback onTap;
 
@@ -11,7 +12,6 @@ class AssessmentSectionCard extends StatelessWidget {
     super.key,
     required this.title,
     required this.icon,
-    required this.accent,
     required this.onTap,
     this.badgeCount,
   });
@@ -30,24 +30,16 @@ class AssessmentSectionCard extends StatelessWidget {
         borderRadius: radius,
         onTap: onTap,
         child: Container(
-          padding: const EdgeInsets.fromLTRB(14, 14, 12, 14),
+          padding: const EdgeInsets.fromLTRB(16, 14, 12, 14),
           decoration: BoxDecoration(
             borderRadius: radius,
-            border: Border.all(color: Theme.of(context).dividerColor, width: 0.6),
+            border:
+                Border.all(color: Theme.of(context).dividerColor, width: 0.6),
           ),
           child: Row(
             children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: accent.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                alignment: Alignment.center,
-                child: Icon(icon, color: accent, size: 20),
-              ),
-              const SizedBox(width: 12),
+              Icon(icon, color: AppColors.brand, size: 22),
+              const SizedBox(width: 14),
               Expanded(
                 child: Text(
                   title,
@@ -65,7 +57,7 @@ class AssessmentSectionCard extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
-                    color: accent,
+                    color: AppColors.brand,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(

@@ -12,7 +12,6 @@ class PlacementsPage extends StatelessWidget {
       type: AssessmentType.placements,
       titleKey: 'placements',
       emptyMessageKey: 'noActivePlacements',
-      itemIcon: Icons.place_outlined,
     );
   }
 }

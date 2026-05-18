@@ -12,7 +12,6 @@ class LastDancesPage extends StatelessWidget {
       type: AssessmentType.lastDances,
       titleKey: 'lastDances',
       emptyMessageKey: 'noActiveLastDances',
-      itemIcon: Icons.school_outlined,
     );
   }
 }

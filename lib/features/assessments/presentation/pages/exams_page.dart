@@ -12,7 +12,6 @@ class ExamsPage extends StatelessWidget {
       type: AssessmentType.exams,
       titleKey: 'exams',
       emptyMessageKey: 'noActiveExams',
-      itemIcon: Icons.assignment_outlined,
     );
   }
 }

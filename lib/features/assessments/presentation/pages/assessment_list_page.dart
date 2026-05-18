@@ -16,14 +16,12 @@ class AssessmentListPageView extends StatelessWidget {
   final AssessmentType type;
   final String titleKey;
   final String emptyMessageKey;
-  final IconData itemIcon;
 
   const AssessmentListPageView({
     super.key,
     required this.type,
     required this.titleKey,
     required this.emptyMessageKey,
-    required this.itemIcon,
   });
 
   @override
@@ -36,7 +34,6 @@ class AssessmentListPageView extends StatelessWidget {
       child: _View(
         titleKey: titleKey,
         emptyMessageKey: emptyMessageKey,
-        itemIcon: itemIcon,
       ),
     );
   }
@@ -45,12 +42,7 @@ class AssessmentListPageView extends StatelessWidget {
 class _View extends StatelessWidget {
   final String titleKey;
   final String emptyMessageKey;
-  final IconData itemIcon;
-  const _View({
-    required this.titleKey,
-    required this.emptyMessageKey,
-    required this.itemIcon,
-  });
+  const _View({required this.titleKey, required this.emptyMessageKey});
 
   Future<void> _refresh(BuildContext context) async {
     final bloc = context.read<AssessmentListBloc>();
@@ -75,8 +67,6 @@ class _View extends StatelessWidget {
             child: _Body(
               state: state,
               emptyMessage: emptyMessageKey.tr(),
-              titleFallback: titleKey.tr(),
-              itemIcon: itemIcon,
             ),
           );
         },
@@ -88,15 +78,7 @@ class _View extends StatelessWidget {
 class _Body extends StatelessWidget {
   final AssessmentListState state;
   final String emptyMessage;
-  final String titleFallback;
-  final IconData itemIcon;
-
-  const _Body({
-    required this.state,
-    required this.emptyMessage,
-    required this.titleFallback,
-    required this.itemIcon,
-  });
+  const _Body({required this.state, required this.emptyMessage});
 
   @override
   Widget build(BuildContext context) {
@@ -139,16 +121,30 @@ class _Body extends StatelessWidget {
         ],
       );
     }
+    final items = state.page.items;
+    final muted =
+        Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.55);
     return ListView.separated(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 24),
       physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: state.page.items.length,
-      separatorBuilder: (_, _) => const SizedBox(height: 10),
-      itemBuilder: (_, i) => AssessmentListCard(
-        item: state.page.items[i],
-        icon: itemIcon,
-        fallbackTitle: titleFallback,
-      ),
+      itemCount: items.length + 1,
+      separatorBuilder: (_, _) => const SizedBox(height: 12),
+      itemBuilder: (_, i) {
+        if (i == 0) {
+          return Padding(
+            padding: const EdgeInsets.only(left: 2, bottom: 2),
+            child: Text(
+              '${'totalLabel'.tr()}: ${state.page.total}',
+              style: TextStyle(
+                color: muted,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          );
+        }
+        return AssessmentListCard(item: items[i - 1]);
+      },
     );
   }
 }

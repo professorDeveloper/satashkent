@@ -1,9 +1,9 @@
 enum AssessmentType {
-  placements('/placements/new'),
+  placements('/placement/new'),
   levelChecks('/level-checks/new'),
   homework('/homework/new'),
   exams('/exams/new'),
-  lastDances('/last-dances/new');
+  lastDances('/final-exams/new');
 
   final String endpoint;
   const AssessmentType(this.endpoint);
