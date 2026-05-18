@@ -7,6 +7,7 @@ import '../../domain/entities/question_detail.dart';
 
 class CommentTile extends StatelessWidget {
   final QuestionComment item;
+
   const CommentTile({super.key, required this.item});
 
   @override
@@ -18,10 +19,7 @@ class CommentTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: scheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-          width: 0.8,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor, width: 0.8),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,12 +79,13 @@ class CommentTile extends StatelessWidget {
 class _Avatar extends StatelessWidget {
   final String image;
   final String name;
+
   const _Avatar({required this.image, required this.name});
 
   @override
   Widget build(BuildContext context) {
-    final initial =
-        (name.isNotEmpty ? name.characters.first : '?').toUpperCase();
+    final initial = (name.isNotEmpty ? name.characters.first : '?')
+        .toUpperCase();
     final placeholder = Container(
       width: 32,
       height: 32,
@@ -106,14 +105,7 @@ class _Avatar extends StatelessWidget {
     );
     if (image.isEmpty) return placeholder;
     return ClipOval(
-      child: CachedNetworkImage(
-        imageUrl: image,
-        width: 32,
-        height: 32,
-        fit: BoxFit.cover,
-        errorWidget: (_, _, _) => placeholder,
-        placeholder: (_, _) => placeholder,
-      ),
+      child: Image.network(image, width: 32, height: 32, fit: BoxFit.cover),
     );
   }
 }

@@ -31,8 +31,6 @@ class QuestionCard extends StatelessWidget {
       case QuestionStatus.unknown:
         borderColor = Theme.of(context).dividerColor;
     }
-    debugPrint(question.status.name);
-    debugPrint(question.type.name);
     return Material(
       color: scheme.surface,
       borderRadius: radius,

@@ -20,6 +20,7 @@ class MainShellPage extends StatefulWidget {
 
 class _MainShellPageState extends State<MainShellPage> {
   final tabController = getIt<MainTabController>();
+  final Set<int> visited = {0};
 
   static const tabs = <MainTabSpec>[
     MainTabSpec(Icons.grid_view_rounded, 'tabDashboard'),
@@ -42,7 +43,25 @@ class _MainShellPageState extends State<MainShellPage> {
   }
 
   void onTabChanged() {
-    if (mounted) setState(() {});
+    if (!mounted) return;
+    visited.add(tabController.index);
+    setState(() {});
+  }
+
+  Widget _pageFor(int index, String localeKey) {
+    switch (index) {
+      case 0:
+        return HomePage(key: ValueKey('home-$localeKey'));
+      case 1:
+        return CompetitionsPage(key: ValueKey('competitions-$localeKey'));
+      case 2:
+        return AssessmentsPage(key: ValueKey('assessments-$localeKey'));
+      case 3:
+        return QuestionsPage(key: ValueKey('questions-$localeKey'));
+      case 4:
+        return ProfilePage(key: ValueKey('profile-$localeKey'));
+    }
+    return const SizedBox.shrink();
   }
 
   @override
@@ -58,13 +77,10 @@ class _MainShellPageState extends State<MainShellPage> {
       child: Scaffold(
         body: IndexedStack(
           index: activeIndex,
-          children: [
-            HomePage(key: ValueKey('home-$localeKey')),
-            CompetitionsPage(key: ValueKey('competitions-$localeKey')),
-            AssessmentsPage(key: ValueKey('assessments-$localeKey')),
-            QuestionsPage(key: ValueKey('questions-$localeKey')),
-            ProfilePage(key: ValueKey('profile-$localeKey')),
-          ],
+          children: List.generate(tabs.length, (i) {
+            if (!visited.contains(i)) return const SizedBox.shrink();
+            return _pageFor(i, localeKey);
+          }),
         ),
         bottomNavigationBar: MainBottomNav(
           index: activeIndex,
