@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/storage/hive_service.dart';
@@ -36,8 +38,13 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       success: (_) {},
       failure: (e) => error = e.toString().replaceFirst('Exception: ', ''),
     );
-    final user = profileRes.getOrNull() ?? hiveService.getUser();
+    final user = profileRes.getOrNull();
     final assessments = assessRes.getOrNull() ?? state.assessments;
+    final img = user?.image;
+    if (img != null && img.isNotEmpty) {
+      await CachedNetworkImage.evictFromCache(img);
+      imageCache.evict(NetworkImage(img));
+    }
     emit(state.copyWith(
       loading: false,
       user: user,

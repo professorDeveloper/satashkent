@@ -17,6 +17,7 @@ class ProfileHeaderRow extends StatelessWidget {
     final subtitle = (user.phone ?? '').isNotEmpty
         ? user.phone!
         : (user.email ?? user.login);
+    debugPrint("Profile header row:${user.image}");
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
       child: Row(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../domain/entities/question.dart';
 import 'question_labels.dart';
@@ -7,6 +8,7 @@ class QuestionCard extends StatelessWidget {
   final int index;
   final Question question;
   final VoidCallback? onTap;
+
   const QuestionCard({
     super.key,
     required this.index,
@@ -19,6 +21,17 @@ class QuestionCard extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final muted = scheme.onSurface.withValues(alpha: 0.55);
     final radius = BorderRadius.circular(16);
+    Color borderColor = Theme.of(context).dividerColor;
+    switch (question.status) {
+      case QuestionStatus.newOne:
+        borderColor = Theme.of(context).dividerColor;
+      case QuestionStatus.correct:
+        borderColor = const Color(0xFF239B5C);
+      case QuestionStatus.wrong:
+        borderColor = const Color(0xFFE24646);
+      case QuestionStatus.unknown:
+        borderColor = Theme.of(context).dividerColor;
+    }
     return Material(
       color: scheme.surface,
       borderRadius: radius,
@@ -29,8 +42,7 @@ class QuestionCard extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
           decoration: BoxDecoration(
             borderRadius: radius,
-            border:
-                Border.all(color: Theme.of(context).dividerColor, width: 0.6),
+            border: Border.all(color: borderColor, width: 0.6),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,11 +86,7 @@ class QuestionCard extends StatelessWidget {
                   _body(),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 12.5,
-                    color: muted,
-                    height: 1.4,
-                  ),
+                  style: TextStyle(fontSize: 12.5, color: muted, height: 1.4),
                 ),
               ],
             ],
@@ -106,6 +114,7 @@ class QuestionCard extends StatelessWidget {
 
 class _TypePill extends StatelessWidget {
   final QuestionType type;
+
   const _TypePill({required this.type});
 
   @override
@@ -124,6 +133,7 @@ class _TypePill extends StatelessWidget {
 
 class _ComplexityPill extends StatelessWidget {
   final QuestionComplexity complexity;
+
   const _ComplexityPill({required this.complexity});
 
   @override
@@ -139,6 +149,7 @@ class _ComplexityPill extends StatelessWidget {
 
 class _SubjectPill extends StatelessWidget {
   final QuestionSubject subject;
+
   const _SubjectPill({required this.subject});
 
   @override
@@ -157,6 +168,7 @@ class _Pill extends StatelessWidget {
   final String label;
   final IconData? icon;
   final bool tint;
+
   const _Pill({
     required this.color,
     required this.label,
@@ -173,10 +185,7 @@ class _Pill extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         border: tint
             ? null
-            : Border.all(
-                color: color.withValues(alpha: 0.4),
-                width: 0.8,
-              ),
+            : Border.all(color: color.withValues(alpha: 0.4), width: 0.8),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

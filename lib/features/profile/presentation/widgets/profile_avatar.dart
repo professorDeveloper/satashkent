@@ -47,6 +47,7 @@ class ProfileAvatar extends StatelessWidget {
         child: hasImage
             ? CachedNetworkImage(
                 imageUrl: image!,
+                cacheKey: image,
                 fit: BoxFit.cover,
                 placeholder: (_, _) => _logo(size),
                 errorWidget: (_, _, _) => _logo(size),

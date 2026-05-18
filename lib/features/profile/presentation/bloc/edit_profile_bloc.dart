@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/storage/hive_service.dart';
@@ -58,12 +60,20 @@ class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
     emit(state.copyWith(uploading: true, clearError: true, clearInfo: true));
     final result = await updateProfileImageUseCase(bytes: event.bytes);
     result.when(
-      success: (url) => emit(state.copyWith(
-        uploading: false,
-        imageUrl: url ?? state.imageUrl,
-        infoMessage: 'photoUpdated',
-        messageNonce: state.messageNonce + 1,
-      )),
+      success: (url) {
+        final newUrl = url ?? state.imageUrl;
+        if (newUrl != null && newUrl.isNotEmpty) {
+          CachedNetworkImage.evictFromCache(newUrl);
+          imageCache.clear();
+          imageCache.clearLiveImages();
+        }
+        emit(state.copyWith(
+          uploading: false,
+          imageUrl: newUrl,
+          infoMessage: 'photoUpdated',
+          messageNonce: state.messageNonce + 1,
+        ));
+      },
       failure: (e) => emit(state.copyWith(
         uploading: false,
         errorMessage: e.toString().replaceFirst('Exception: ', ''),

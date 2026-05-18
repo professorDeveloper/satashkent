@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/rendering.dart';
 
 import '../../../../core/error/result.dart';
 import '../../../../core/storage/hive_service.dart';
@@ -21,6 +22,7 @@ class ProfileRepositoryImpl implements ProfileRepository {
   Future<Result<User>> getProfile() async {
     try {
       final user = await _remote.getProfile();
+      debugPrint(user.image??"");
       await _hive.saveUser(user);
       return Success(user);
     } on DioException catch (e) {
