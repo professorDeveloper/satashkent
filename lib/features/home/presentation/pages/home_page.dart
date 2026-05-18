@@ -68,7 +68,6 @@ class _HomeViewState extends State<_HomeView> {
     } catch (_) {}
   }
 
-
   Future<void> editGoalScore() async {
     final bloc = context.read<HomeBloc>();
     final goal = bloc.state.user?.goalScore;
@@ -101,11 +100,13 @@ class _HomeViewState extends State<_HomeView> {
     final bloc = context.read<HomeBloc>();
     final result = await showGoalUniversityDialog(context);
     if (result == null || !mounted) return;
-    bloc.add(HomeGoalUniversityPicked(
-      bytes: result.bytes,
-      filename: result.filename,
-      contentType: result.contentType,
-    ));
+    bloc.add(
+      HomeGoalUniversityPicked(
+        bytes: result.bytes,
+        filename: result.filename,
+        contentType: result.contentType,
+      ),
+    );
   }
 
   @override
@@ -118,9 +119,9 @@ class _HomeViewState extends State<_HomeView> {
         final messenger = ScaffoldMessenger.of(context);
         messenger.hideCurrentSnackBar();
         messenger.showSnackBar(
-          SnackBar(content: Text(text), behavior: SnackBarBehavior.floating),
+          SnackBar(content: Text(msg), behavior: SnackBarBehavior.floating),
         );
-        },
+      },
       child: Scaffold(
         appBar: _HomeAppBar(
           name: context.select<HomeBloc, String?>((b) => b.state.user?.name),
@@ -232,10 +233,7 @@ class _DashboardList extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        QuickAccessSection(
-          assessments: state.assessments,
-          onTap: (_) {},
-        ),
+        QuickAccessSection(assessments: state.assessments, onTap: (_) {}),
         const SizedBox(height: 12),
         const BookmarkedSection(),
       ],
@@ -265,10 +263,7 @@ class _HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               '${'hi'.tr()} ${(name ?? '').trim()}',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
             ),
           ),
         ],
@@ -283,6 +278,7 @@ class _HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
 class _NotificationsButton extends StatelessWidget {
   final VoidCallback onTap;
+
   const _NotificationsButton({required this.onTap});
 
   @override
