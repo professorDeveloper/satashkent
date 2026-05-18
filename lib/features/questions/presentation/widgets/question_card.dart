@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../domain/entities/question.dart';
 import 'question_labels.dart';
@@ -32,6 +31,8 @@ class QuestionCard extends StatelessWidget {
       case QuestionStatus.unknown:
         borderColor = Theme.of(context).dividerColor;
     }
+    debugPrint(question.status.name);
+    debugPrint(question.type.name);
     return Material(
       color: scheme.surface,
       borderRadius: radius,

@@ -161,26 +161,29 @@ class QuestionModel extends Question {
   factory QuestionModel.fromJson(Map<String, dynamic> j) {
     final raw = j['rawText'] ?? j['title'] ?? j['question'] ?? j['text'];
     final body = j['content'] ?? j['body'] ?? j['description'];
+    QuestionStatus status = QuestionStatus.unknown;
+    if (j['isRight'] == null) {
+      status = QuestionStatus.newOne;
+    } else if (j['isRight'] is bool) {
+      status = j['isRight'] ? QuestionStatus.correct : QuestionStatus.wrong;
+    }
     return QuestionModel(
       id: (j['_id'] ?? j['id'] ?? '') as String,
       code: (j['code'] ?? j['questionCode'] ?? '') as String,
       title: raw is String ? raw : '',
       content: body is String ? body : '',
       type: QuestionEnums.parseType(j['type'] as String?),
-      complexity: QuestionEnums.parseComplexity(j['complexityLevel'] as String?),
+      complexity: QuestionEnums.parseComplexity(
+        j['complexityLevel'] as String?,
+      ),
       subject: QuestionEnums.parseSubject(j['subject'] as String?),
-      status: QuestionEnums.parseStatus(j['submissionStatus'] as String?),
+      status: status,
     );
   }
 }
 
 class QuestionsPageModel extends QuestionsPage {
-  const QuestionsPageModel({
-    super.items,
-    super.total,
-    super.page,
-    super.limit,
-  });
+  const QuestionsPageModel({super.items, super.total, super.page, super.limit});
 
   factory QuestionsPageModel.fromJson(
     dynamic raw, {
@@ -199,9 +202,9 @@ class QuestionsPageModel extends QuestionsPage {
       total: (source['total'] as num?)?.toInt() ?? 0,
       items: list is List<dynamic>
           ? list
-              .whereType<Map<String, dynamic>>()
-              .map(QuestionModel.fromJson)
-              .toList()
+                .whereType<Map<String, dynamic>>()
+                .map(QuestionModel.fromJson)
+                .toList()
           : const [],
     );
   }

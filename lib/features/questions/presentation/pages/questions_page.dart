@@ -252,7 +252,7 @@ class _QuestionsViewState extends State<_QuestionsView> {
                             padding: EdgeInsets.only(
                               top: i == 0 ? 0 : 10,
                             ),
-                            child: QuestionCard(
+                            child:  QuestionCard(
                               index: i + 1,
                               question: q,
                               onTap: () async {
