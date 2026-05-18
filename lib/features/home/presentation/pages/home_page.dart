@@ -233,11 +233,26 @@ class _DashboardList extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 12),
-        QuickAccessSection(assessments: state.assessments, onTap: (_) {}),
+        QuickAccessSection(
+          assessments: state.assessments,
+          onTap: (type) => _openAssessmentSection(context, type),
+        ),
         const SizedBox(height: 12),
         const BookmarkedSection(),
       ],
     );
+  }
+
+  void _openAssessmentSection(BuildContext context, String type) {
+    const routes = <String, String>{
+      'placement': '/assessments/placements',
+      'homework': '/assessments/homework',
+      'exam': '/assessments/exams',
+      'finalExam': '/assessments/last-dances',
+      'levelCheck': '/assessments/level-checks',
+    };
+    final route = routes[type];
+    if (route != null) context.push(route);
   }
 }
 

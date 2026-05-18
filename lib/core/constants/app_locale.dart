@@ -1,7 +1,6 @@
 enum AppLocale {
   uz('uz', 'O‘zbekcha'),
-  en('en', 'English'),
-  ru('ru', 'Русский');
+  en('en', 'English');
 
   final String code;
   final String label;
@@ -9,5 +8,5 @@ enum AppLocale {
 
   static AppLocale fromCode(String? code) =>
       AppLocale.values.firstWhere((e) => e.code == code,
-          orElse: () => AppLocale.en);
+          orElse: () => AppLocale.uz);
 }

@@ -90,8 +90,6 @@ class _LanguageCard extends StatelessWidget {
         return '🇺🇿';
       case AppLocale.en:
         return '🇬🇧';
-      case AppLocale.ru:
-        return '🇷🇺';
     }
   }
 

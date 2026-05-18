@@ -96,7 +96,6 @@ class _LanguageTile extends StatelessWidget {
   String get _flag => switch (locale) {
         AppLocale.uz => '🇺🇿',
         AppLocale.en => '🇬🇧',
-        AppLocale.ru => '🇷🇺',
       };
 
   @override

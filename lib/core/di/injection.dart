@@ -12,6 +12,11 @@ import '../../features/competitions/data/repositories/competitions_repository_im
 import '../../features/competitions/domain/repositories/competitions_repository.dart';
 import '../../features/competitions/domain/usecases/get_active_competitions_usecase.dart';
 import '../../features/competitions/presentation/bloc/competitions_bloc.dart';
+import '../../features/level_checks/data/datasources/level_checks_remote_data_source.dart';
+import '../../features/level_checks/data/repositories/level_checks_repository_impl.dart';
+import '../../features/level_checks/domain/repositories/level_checks_repository.dart';
+import '../../features/level_checks/domain/usecases/get_level_checks_usecase.dart';
+import '../../features/level_checks/presentation/bloc/level_checks_bloc.dart';
 import '../../features/home/data/datasources/home_remote_data_source.dart';
 import '../../features/home/data/repositories/home_repository_impl.dart';
 import '../../features/home/domain/repositories/home_repository.dart';
@@ -93,6 +98,9 @@ Future<void> configureDependencies() async {
   getIt.registerSingleton<CompetitionsRemoteDataSource>(
     CompetitionsRemoteDataSource(dio: getIt<Dio>()),
   );
+  getIt.registerSingleton<LevelChecksRemoteDataSource>(
+    LevelChecksRemoteDataSource(dio: getIt<Dio>()),
+  );
   getIt.registerSingleton<HomeRemoteDataSource>(
     HomeRemoteDataSource(dio: getIt<Dio>()),
   );
@@ -114,6 +122,9 @@ Future<void> configureDependencies() async {
   );
   getIt.registerSingleton<CompetitionsRepository>(
     CompetitionsRepositoryImpl(getIt<CompetitionsRemoteDataSource>()),
+  );
+  getIt.registerSingleton<LevelChecksRepository>(
+    LevelChecksRepositoryImpl(getIt<LevelChecksRemoteDataSource>()),
   );
   getIt.registerSingleton<HomeRepository>(
     HomeRepositoryImpl(getIt<HomeRemoteDataSource>(), getIt<HiveService>()),
@@ -152,6 +163,9 @@ Future<void> configureDependencies() async {
 
   getIt.registerSingleton<GetActiveCompetitionsUseCase>(
     GetActiveCompetitionsUseCase(getIt<CompetitionsRepository>()),
+  );
+  getIt.registerSingleton<GetLevelChecksUseCase>(
+    GetLevelChecksUseCase(getIt<LevelChecksRepository>()),
   );
   getIt.registerSingleton<GetAssessmentsSummaryUseCase>(
     GetAssessmentsSummaryUseCase(getIt<HomeRepository>()),
@@ -217,6 +231,11 @@ Future<void> configureDependencies() async {
   getIt.registerFactory<CompetitionsBloc>(
     () => CompetitionsBloc(
       getActiveCompetitionsUseCase: getIt<GetActiveCompetitionsUseCase>(),
+    ),
+  );
+  getIt.registerFactory<LevelChecksBloc>(
+    () => LevelChecksBloc(
+      getLevelChecksUseCase: getIt<GetLevelChecksUseCase>(),
     ),
   );
   getIt.registerFactory<QuestionsBloc>(

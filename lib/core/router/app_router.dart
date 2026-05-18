@@ -4,6 +4,11 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/assessments/presentation/pages/exams_page.dart';
+import '../../features/assessments/presentation/pages/homework_page.dart';
+import '../../features/assessments/presentation/pages/last_dances_page.dart';
+import '../../features/assessments/presentation/pages/level_checks_page.dart';
+import '../../features/assessments/presentation/pages/placements_page.dart';
 import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/auth/presentation/bloc/auth_state.dart';
 import '../../features/auth/presentation/pages/forgot_password_page.dart';
@@ -93,6 +98,28 @@ class AppRouter {
             key: ValueKey('q-${st.pathParameters['id']}'),
             questionId: st.pathParameters['id']!,
           ),
+        ),
+        GoRoute(
+          path: '/assessments/placements',
+          builder: (c, _) => PlacementsPage(key: _localeKey(c, 'placements')),
+        ),
+        GoRoute(
+          path: '/assessments/level-checks',
+          builder: (c, _) =>
+              LevelChecksPage(key: _localeKey(c, 'level-checks')),
+        ),
+        GoRoute(
+          path: '/assessments/homework',
+          builder: (c, _) => HomeworkPage(key: _localeKey(c, 'homework')),
+        ),
+        GoRoute(
+          path: '/assessments/exams',
+          builder: (c, _) => ExamsPage(key: _localeKey(c, 'exams')),
+        ),
+        GoRoute(
+          path: '/assessments/last-dances',
+          builder: (c, _) =>
+              LastDancesPage(key: _localeKey(c, 'last-dances')),
         ),
       ],
     );

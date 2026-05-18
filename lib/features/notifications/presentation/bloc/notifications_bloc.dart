@@ -23,12 +23,31 @@ class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
     emit(state.copyWith(loading: true, clearError: true));
     final res = await getNotificationsUseCase();
     res.when(
-      success: (page) => emit(state.copyWith(loading: false, page: page)),
+      success: (page) => emit(state.copyWith(
+        loading: false,
+        page: NotificationsPage(
+          items: _sortNewestFirst(page.items),
+          newTotal: page.newTotal,
+        ),
+      )),
       failure: (e) => emit(state.copyWith(
         loading: false,
         errorMessage: e.toString().replaceFirst('Exception: ', ''),
       )),
     );
+  }
+
+  List<NotificationItem> _sortNewestFirst(List<NotificationItem> items) {
+    final sorted = [...items];
+    sorted.sort((a, b) {
+      final aTime = a.createdAt;
+      final bTime = b.createdAt;
+      if (aTime == null && bTime == null) return 0;
+      if (aTime == null) return 1;
+      if (bTime == null) return -1;
+      return bTime.compareTo(aTime);
+    });
+    return sorted;
   }
 
   Future<void> _onRequested(
