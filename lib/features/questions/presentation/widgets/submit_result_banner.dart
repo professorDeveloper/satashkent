@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
 
-class SubmitResultBanner extends StatelessWidget {
+class SubmitResultInfo extends StatelessWidget {
   final bool isRight;
   final VoidCallback? onDismiss;
 
-  const SubmitResultBanner({
+  const SubmitResultInfo({
     super.key,
     required this.isRight,
     this.onDismiss,

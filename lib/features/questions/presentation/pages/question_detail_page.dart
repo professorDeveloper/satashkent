@@ -10,6 +10,8 @@ import '../../../../core/widgets/primary_button.dart';
 import '../../domain/entities/question.dart';
 import '../../domain/entities/question_detail.dart';
 import '../bloc/question_detail_bloc.dart';
+import '../bloc/question_detail_event.dart';
+import '../bloc/question_detail_state.dart';
 import '../widgets/attempts_sheet.dart';
 import '../widgets/comments_sheet.dart';
 import '../widgets/input_answer_field.dart';
@@ -119,17 +121,17 @@ class _QuestionDetailViewState extends State<_QuestionDetailView> {
           if (detail == null) {
             return const SizedBox.shrink();
           }
-          return _Loaded(state: state, detail: detail);
+          return QuestionDetailSuccess(state: state, detail: detail);
         },
       ),
     );
   }
 }
 
-class _Loaded extends StatelessWidget {
+class QuestionDetailSuccess extends StatelessWidget {
   final QuestionDetailState state;
   final QuestionDetail detail;
-  const _Loaded({required this.state, required this.detail});
+  const QuestionDetailSuccess({super.key, required this.state, required this.detail});
 
   @override
   Widget build(BuildContext context) {
@@ -154,7 +156,8 @@ class _Loaded extends StatelessWidget {
               children: [
                 _MetaPills(detail: detail),
                 const SizedBox(height: 14),
-                if (detail.title.isNotEmpty) ...[
+                if (detail.title.isNotEmpty)
+                  ...[
                   Text(
                     detail.title,
                     style: const TextStyle(
@@ -184,7 +187,7 @@ class _Loaded extends StatelessWidget {
               ? const SizedBox(width: double.infinity)
               : Padding(
                   padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                  child: SubmitResultBanner(
+                  child: SubmitResultInfo(
                     isRight: state.lastResult!.isRight,
                     onDismiss: () =>
                         bloc.add(const SubmitResultDismissed()),

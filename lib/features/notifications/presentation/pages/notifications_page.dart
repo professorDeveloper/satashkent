@@ -6,6 +6,8 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../domain/entities/notification_item.dart';
 import '../bloc/notifications_bloc.dart';
+import '../bloc/notifications_event.dart';
+import '../bloc/notifications_state.dart';
 
 class NotificationsScreen extends StatelessWidget {
   const NotificationsScreen({super.key});

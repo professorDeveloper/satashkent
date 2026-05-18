@@ -7,6 +7,8 @@ import '../../../../core/di/injection.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../main_shell/presentation/widgets/main_tab_controller.dart';
 import '../../../notifications/presentation/bloc/notifications_bloc.dart';
+import '../../../notifications/presentation/bloc/notifications_event.dart';
+import '../../../notifications/presentation/bloc/notifications_state.dart';
 import '../bloc/home_bloc.dart';
 import '../bloc/home_event.dart';
 import '../bloc/home_state.dart';
@@ -66,13 +68,6 @@ class _HomeViewState extends State<_HomeView> {
     } catch (_) {}
   }
 
-  void showSnack(String text) {
-    final messenger = ScaffoldMessenger.of(context);
-    messenger.hideCurrentSnackBar();
-    messenger.showSnackBar(
-      SnackBar(content: Text(text), behavior: SnackBarBehavior.floating),
-    );
-  }
 
   Future<void> editGoalScore() async {
     final bloc = context.read<HomeBloc>();
@@ -120,8 +115,12 @@ class _HomeViewState extends State<_HomeView> {
       listener: (context, state) {
         final msg = state.toastMessage;
         if (msg == null || msg.isEmpty) return;
-        showSnack(_resolveMessage(msg));
-      },
+        final messenger = ScaffoldMessenger.of(context);
+        messenger.hideCurrentSnackBar();
+        messenger.showSnackBar(
+          SnackBar(content: Text(text), behavior: SnackBarBehavior.floating),
+        );
+        },
       child: Scaffold(
         appBar: _HomeAppBar(
           name: context.select<HomeBloc, String?>((b) => b.state.user?.name),

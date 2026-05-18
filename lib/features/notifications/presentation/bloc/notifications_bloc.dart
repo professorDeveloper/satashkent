@@ -1,58 +1,10 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../domain/entities/notification_item.dart';
 import '../../domain/usecases/get_notifications_usecase.dart';
 import '../../domain/usecases/mark_notification_read_usecase.dart';
-
-abstract class NotificationsEvent extends Equatable {
-  const NotificationsEvent();
-  @override
-  List<Object?> get props => const [];
-}
-
-class NotificationsRequested extends NotificationsEvent {
-  const NotificationsRequested();
-}
-
-class NotificationsRefreshed extends NotificationsEvent {
-  const NotificationsRefreshed();
-}
-
-class NotificationMarkedRead extends NotificationsEvent {
-  final String id;
-  const NotificationMarkedRead(this.id);
-  @override
-  List<Object?> get props => [id];
-}
-
-class NotificationsState extends Equatable {
-  final bool loading;
-  final NotificationsPage page;
-  final String? errorMessage;
-
-  const NotificationsState({
-    this.loading = false,
-    this.page = const NotificationsPage(),
-    this.errorMessage,
-  });
-
-  NotificationsState copyWith({
-    bool? loading,
-    NotificationsPage? page,
-    String? errorMessage,
-    bool clearError = false,
-  }) {
-    return NotificationsState(
-      loading: loading ?? this.loading,
-      page: page ?? this.page,
-      errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
-    );
-  }
-
-  @override
-  List<Object?> get props => [loading, page, errorMessage];
-}
+import 'notifications_event.dart';
+import 'notifications_state.dart';
 
 class NotificationsBloc extends Bloc<NotificationsEvent, NotificationsState> {
   final GetNotificationsUseCase getNotificationsUseCase;
