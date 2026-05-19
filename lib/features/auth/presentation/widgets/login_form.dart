@@ -19,9 +19,8 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
-  late final _login = TextEditingController(text: AppConstants.devLogin ?? '');
-  late final _password =
-      TextEditingController(text: AppConstants.devPassword ?? '');
+  late final _login = TextEditingController(text: AppConstants.devLogin);
+  late final _password = TextEditingController(text: AppConstants.devPassword);
 
   @override
   void dispose() {

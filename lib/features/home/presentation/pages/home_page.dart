@@ -148,14 +148,6 @@ class _HomeViewState extends State<_HomeView> {
     );
   }
 
-  String _resolveMessage(String key) {
-    const translatable = {
-      'goalScoreUpdated',
-      'examDateUpdated',
-      'goalUniversityUpdated',
-    };
-    return translatable.contains(key) ? key.tr() : key;
-  }
 }
 
 class _DashboardList extends StatelessWidget {

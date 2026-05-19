@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/error/result.dart';
 import '../../../../core/storage/hive_service.dart';
 import '../../domain/entities/user.dart';
