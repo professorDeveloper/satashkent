@@ -14,7 +14,6 @@ import '../../features/auth/presentation/bloc/auth_state.dart';
 import '../../features/auth/presentation/pages/forgot_password_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
-import '../../features/intro/presentation/pages/intro_page.dart';
 import '../../features/main_shell/presentation/pages/main_shell_page.dart';
 import '../../features/notifications/presentation/pages/notifications_page.dart';
 import '../../features/profile/presentation/pages/edit_profile_page.dart';
@@ -49,10 +48,7 @@ class AppRouter {
           path: '/splash',
           builder: (c, _) => SplashPage(key: _localeKey(c, 'splash')),
         ),
-        GoRoute(
-          path: '/intro',
-          builder: (c, _) => IntroPage(key: _localeKey(c, 'intro')),
-        ),
+
         GoRoute(
           path: '/language',
           builder: (c, _) =>
