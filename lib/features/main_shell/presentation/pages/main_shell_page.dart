@@ -33,6 +33,7 @@ class _MainShellPageState extends State<MainShellPage> {
   @override
   void initState() {
     super.initState();
+    tabController.reset();
     tabController.addListener(onTabChanged);
   }
 
