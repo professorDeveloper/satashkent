@@ -1,1 +1,1 @@
-## _SATASHKENT_ Task App
+## SATASHKENT Task App
