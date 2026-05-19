@@ -47,7 +47,6 @@ lib/
     ├── notifications/
     ├── referral/
     ├── language/
-    ├── intro/
     ├── splash/
     └── main_shell/       
 ```
