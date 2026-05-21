@@ -33,8 +33,7 @@ class AppRouter {
         final loc = state.matchedLocation;
         if (loc == '/splash') return null;
         final s = authBloc.state;
-        final isAuthRoute =
-            loc == '/login' || loc == '/register' || loc == '/forgot-password';
+        final isAuthRoute = loc == '/login' || loc == '/register' || loc == '/forgot-password';
         if (s is AuthAuthenticated) {
           return isAuthRoute ? '/home' : null;
         }
