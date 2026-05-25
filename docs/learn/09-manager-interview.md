@@ -37,7 +37,7 @@ Behavioral savollarga shu struktura bilan javob bering:
 
 ## Tayyor javob
 
-> "Men Elyor, PDP universitetining 2-kurs talabasiman. 2023-yildan beri mobile dasturlash bilan shug'ullanaman.
+> "Men ...., PDP universitetining 2-kurs talabasiman. 2023-yildan beri mobile dasturlash bilan shug'ullanaman.
 >
 > Yo'limni **Android Native, Kotlin** bilan boshlaganman, keyin GITA bootcamp'da **Flutter**'ni chuqur o'rgandim. Asosiy ishim Flutter bo'yicha — **BLoC, Clean Architecture, Hive** bilan ishlayman, Native tajribam ham bor.
 >
