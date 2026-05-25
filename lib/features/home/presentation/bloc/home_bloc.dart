@@ -83,7 +83,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Future<void> _onExamDate(
     HomeExamDateSubmitted event,
     Emitter<HomeState> emit,
-  ) async {
+  )
+  async {
     emit(state.copyWith(mutating: true));
     final res = await setExamDateUseCase(event.date);
     res.when(

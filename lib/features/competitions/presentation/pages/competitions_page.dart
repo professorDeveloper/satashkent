@@ -16,8 +16,7 @@ class CompetitionsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<CompetitionsBloc>(
-      create: (_) =>
-          getIt<CompetitionsBloc>()..add(const CompetitionsRequested()),
+      create: (_) => getIt<CompetitionsBloc>()..add(const CompetitionsRequested()),
       child: const _CompetitionsView(),
     );
   }

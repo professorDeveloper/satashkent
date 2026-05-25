@@ -9,7 +9,6 @@ import '../../../auth/presentation/bloc/auth_state.dart';
 import '../widgets/splash_background.dart';
 import '../widgets/splash_branding.dart';
 
-
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
 
@@ -27,24 +26,25 @@ class _SplashPageState extends State<SplashPage> {
   void initState() {
     super.initState();
     _startedAt = DateTime.now();
-    WidgetsBinding.instance.addPostFrameCallback((_) => _bootstrap());
+    WidgetsBinding.instance.addPostFrameCallback((_) => navigateNext());
   }
 
-  Future<void> _bootstrap() async {
+  Future<void> navigateNext() async {
     final authBloc = context.read<AuthBloc>();
-    if (_isResolved(authBloc.state)) {
-      _scheduleNavigate(authBloc.state);
+    if (isAuthReslove(authBloc.state)) {
+      scheduleNavigate(authBloc.state);
     } else {
-      _sub = authBloc.stream.listen((state) {
-        if (_isResolved(state)) _scheduleNavigate(state);
+      _sub = authBloc.stream.listen( (state) {
+        if (isAuthReslove(state)) scheduleNavigate(state);
       });
     }
   }
 
-  bool _isResolved(AuthState s) =>
-      s is AuthAuthenticated || s is AuthUnauthenticated || s is AuthError;
+  bool isAuthReslove(AuthState s) {
+    return s is AuthAuthenticated || s is AuthUnauthenticated || s is AuthError;
+  }
 
-  Future<void> _scheduleNavigate(AuthState state) async {
+  Future<void> scheduleNavigate(AuthState state) async {
     if (_navigated) return;
     _navigated = true;
     final elapsed = DateTime.now().difference(_startedAt ?? DateTime.now());
@@ -65,9 +65,7 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: SplashBackground(
-        child: SafeArea(child: SplashBranding()),
-      ),
+      body: SplashBackground(child: SafeArea(child: SplashBranding())),
     );
   }
 }
